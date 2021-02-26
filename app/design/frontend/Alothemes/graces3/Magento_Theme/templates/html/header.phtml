@@ -1,0 +1,85 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**
+ * @var \Magento\Theme\Block\Html\Header $block
+ */
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->get('Magento\Customer\Model\Session');
+$isLoggedIn = $customerSession->isLoggedIn();
+$msg = $isLoggedIn ? __('Welcome') .', '. $customerSession->getCustomer()->getName() : $this->getWelcome() 
+?>
+<link href='//fonts.googleapis.com/css?family=Poppins:400,300,500,600,700' rel='stylesheet' type='text/css'>
+<link href='//fonts.googleapis.com/css?family=Lato:400,100italic,100,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<header class="page-header alothemes">
+    <div class="header">
+        <div class="header-top">
+        	<div class="container">
+				<div class="row">
+					<div class="top-left mobile-center col-md-6 col-sm-6 col-xs-6">
+						<div class="header-search">
+							<div class="search-switcher">
+								<div class="icon-search toggle-tab-search">
+									<i class="lnr lnr-magnifier"></i>
+								</div>
+								<div class="dropdown-switcher toggle-content">
+									<?php echo $this->getChildHtml('top.search'); ?>
+								</div>
+							</div>
+						</div>
+					    <?php echo $this->getChildHtml('store_language'); ?>
+					    <?php echo $this->getChildHtml('currency'); ?>
+				    </div>
+				    <div class="top-right mobile-center col-md-6 col-sm-6 col-xs-6">
+				    	<div class="header-link pull-right">
+			    	    <ul class="top-links">
+							 <?php if( $isLoggedIn ) { ?>
+							    <li>
+									<a href="<?php echo $this->getUrl('customer/account/'); ?>" title="<?php echo __('My account') ?>"><?php echo __('My account') ?>
+									</a>
+								</li>
+							    <li class="logout">
+									<a href="<?php echo $this->getUrl('customer/account/logout'); ?>" title="<?php echo __('Sign Out') ?>"><?php echo __('Sign Out') ?>
+									</a>
+								</li>
+							 <?php } else { ?>
+								<li class="login">
+								  <a href="<?php echo $this->getUrl('customer/account/login'); ?>" title="<?php echo __('Sign In') ?>"><?php echo __('Sign In') ?>
+								  </a>
+								</li>
+								<li class="first">
+									<a id="quick_sigup_link" style="positon:relative;" href="<?php echo $this->getUrl('customer/account/create'); ?>" title="<?php echo __('Register') ?>"><?php echo __('Register') ?>
+									</a>
+								</li>
+							 <?php }  ?>
+				            </ul>
+				    		<div class="content-cart menu-mobile">
+							   <span data-action="toggle-nav" class="action nav-toggle"><span><?php /* @escapeNotVerified */ echo __('Toggle Nav') ?></span></span>
+								<?php echo $this->getChildHtml('minicart'); ?>
+							</div>
+				        </div>
+				    </div>
+				</div>
+			</div>
+        </div>
+		<div class="header-content header-sticker">
+			<div class="container">
+				<div class="row">
+					<div class="content-logo col-xs-6 col-sm-6 col-md-3 col-lg-3 main-logo">
+						<div class="header-logo">
+							<?php echo $this->getChildHtml('logo'); ?>
+						</div>
+					</div>
+					<div class="col-lg-12">
+						<?php echo $this->getChildHtml('navigation.sections'); ?>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <block>
+    <item>
+      <title><![CDATA[Banner Top Menu]]></title>
+      <identifier><![CDATA[banner-top-menu]]></identifier>
+      <content><![CDATA[<div class="banner-top-menu">
+<img class="img-responsive" src="{{media url="wysiwyg/alothemes/static/banner-menu.jpg"}}" alt="" />
+</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block Sidebar Left]]></title>
+      <identifier><![CDATA[category-view-left-custom-block]]></identifier>
+      <content><![CDATA[<div class="left-image"><img class="img-responsive" src="{{media url="wysiwyg/alothemes/static/banner-left-category.jpg"}}" alt="" /></div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[block_map_contacts]]></title>
+      <identifier><![CDATA[block_map_contacts]]></identifier>
+      <content><![CDATA[<div class="col-xs-12 col-sm-12 col-md-12">
+<div class="conttact-top clearfix">
+<div><iframe style="border: 0;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.8277911385558!2d-0.13108129999999998!3d51.51637529999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2d183f5ea3%3A0x8e1c5b00f1b16579!2zMTIgT3hmb3JkIFN0LCBTb2hvLCBMb25kb24gVzFELCBWxrDGoW5nIFF14buRYyBBbmg!5e0!3m2!1svi!2s!4v1434261501432" height="350" width="600"></iframe></div>
+<div class="map-conttact">
+    <h3 class="page-subheading">Information</h3>
+<div class="Information-text">
+	<p>Proin accumsan porta miac maximus. In dapibus mollis risus, nec mattis sem gravida at. Aliquam erat volutpat. Donec pellentes tristque. Vivamus semper non semor
+felis leo sodales tincidunt at ut lectus, aliquam malesuada urna vel sagittis ullamcorper. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+dolore magna aliquyam erat, sed diam voluptua. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet Nulla facilisi. Fusce luctus purus
+semper nulla tempus. Etiam ac hendrerit lacus, nec dapibus enim. </p>
+	<ul class="store_info">
+		<li class="add"><i class="fa fa-home"></i>Graces Inc. 3233 Northbar way, California, United Stated.</li>
+		<li><i class="fa fa-phone"></i><span class="name">Phone:</span><span>(00) 1 3456 789</span></li>
+		<li><i class="fa fa-envelope"></i><span class="name">Email:</span> <span><a href="mailto:support@alothemes.com">support@alothemes.com</a></span></li>
+<li><span class="name">Open:</span> <span>8ham to 9h30pm, except Sunday</span></li>
+	</ul> 
+</div>
+</div>
+</div>	
+</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block Footer Paypal]]></title>
+      <identifier><![CDATA[cms-static-paypal]]></identifier>
+      <content><![CDATA[<div class="footer-paypal">
+						<img src="{{media url="wysiwyg/alothemes/static/paypal.png"}}" alt="" />
+					</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block Footer Top Demo3]]></title>
+      <identifier><![CDATA[block-footer-top]]></identifier>
+      <content><![CDATA[<div class="follow-left col-sm-6">
+	<div class="title">
+		<h3>Follow Us:</h3>
+	</div>
+	<div class="social-link clearfix">
+		<a title="Facebook" href="#"><i class="fa fa-facebook"><span class="hidden">hidden</span></i></a>
+		<a title="Twitter" href="#"><i class="fa fa-twitter"><span class="hidden">hidden</span></i></a>
+		<a title="Dribbble" href="#"><i class="fa fa-dribbble"><span class="hidden">hidden</span></i></a>
+		<a title="Vimeo" href="#"><i class="fa fa-vimeo-square"><span class="hidden">hidden</span></i></a>
+		<a title="Pinterest" href="#"><i class="fa fa-pinterest-p"><span class="hidden">hidden</span></i></a> 
+	</div>
+</div>
+<div class="footer-newsletter-right block-newletter col-sm-6">
+	{{block class="Magento\Newsletter\Block\Subscribe" template="subscribe.phtml"}}
+</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block Footer Main Demo3]]></title>
+      <identifier><![CDATA[cms-static-main-footer]]></identifier>
+      <content><![CDATA[<div class="footer-inner">
+	<div class="container">
+		<div class="footer">
+			<div class="row">
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 col-mobile-12">
+					<div class="collapsible mobile-collapsible">
+						<h3 class="heading"><span class="block-title">Contact Us</span></h3>
+						<span class="toggle-tab mobile" style="display: none;"><span class="hidden">hidden</span></span>
+						<div class="toggle-content">
+							<div class="block1 block-content-statick">
+								<ul class="address-list">
+									<li class="feature-icon first">
+										<p class="no-margin"><span class="tit-contain">No. 987 Sounthway St , JMC Building, California City,USA</span></p>
+									</li>
+									<li class="feature-icon">
+										<p><span class="tit-name">Phone:</span><span class="tit-contain">+001 222 456</span></p>
+									</li>
+									<li class="feature-icon">
+										<p><span class="tit-name">Email:</span><span class="tit-contain">support@alothemes.com</span></p>
+									</li>
+									<li class="feature-icon">
+										<p><span class="tit-name">Open:</span><span class="tit-contain">8:00 am - 8:30 pm</span></p>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 col-mobile-12">
+					<div class="collapsible mobile-collapsible">
+					<h3 class="heading"><span class="block-title">Help & Support</span></h3>
+					<span class="toggle-tab mobile" style="display: none;"><span class="hidden">hidden</span></span>
+						<div class="block-content block-content-statick toggle-content">
+							<ul class="bullet">
+								<li><a href="#">Order & Returns</a></li>
+								<li><a href="#">Shipping Guide</a></li>
+								<li><a href="#">Advance Search</a></li>
+								<li><a href="#">Affiliate</a></li>
+								<li><a href="#">Privacy & Policy</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 col-mobile-12">
+					<div class="collapsible mobile-collapsible">
+					<h3 class="heading"><span class="block-title">Information</span></h3>
+					<span class="toggle-tab mobile" style="display: none;"><span class="hidden">hidden</span></span>
+						<div class="block-content block-content-statick toggle-content">
+							<ul class="bullet">
+								<li><a href="#">Your Account</a></li>
+								<li><a href="#">Our Store</a></li>
+								<li><a href="#">Gift Vouchers</a></li>
+								<li><a href="#">Fast Delivery</a></li>
+								<li><a href="#">Site Map</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 col-mobile-12">
+					<div class="collapsible mobile-collapsible"> 
+						<div class="block-content block-content-statick">
+							{{widget type="Magiccart\Alothemes\Block\Widget\Socialstream" socialnetwork="flickr" template="socialstream.phtml"}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+  </block>
+</root>

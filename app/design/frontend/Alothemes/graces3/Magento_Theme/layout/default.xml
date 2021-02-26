@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+		<referenceContainer name="footer-container">
+			<container name="footer-top" label="Footer Top" htmlTag="div" htmlClass="block-footer-top" before="-">
+                <block class="Magento\Cms\Block\Block" name="block-footer-top">
+                    <arguments>
+                        <argument name="block_id" xsi:type="string">block-footer-top</argument>
+                    </arguments>
+                </block>
+            </container>
+			<container name="footer-bottom" label="Footer Bottom" htmlTag="div" htmlClass="block-footer-bottom" after="footer-top">
+			    <container name="main.wrap" label="Page Footer Wrap" htmlTag="div" htmlClass="main-wrap">
+					<block class="Magento\Cms\Block\Block" name="cms-static-main-footer">
+						<arguments>
+							<argument name="block_id" xsi:type="string">cms-static-main-footer</argument>
+						</arguments>
+					</block>
+					<container name="main.wrap.copyright" label="Page Footer Wrap Copyright" htmlTag="div" htmlClass="main-wrap-copyright" after="cms-static-main-footer">
+						<container name="main.wrap.content" label="Page Footer Wrap Content" htmlTag="div" htmlClass="container">
+							<container name="main.wrap.container" label="Page Footer Wrap Container" htmlTag="div" htmlClass="container-main clearfix">
+							    <block class="Magento\Cms\Block\Block" name="payment-logo">
+									<arguments>
+										<argument name="block_id" xsi:type="string">cms-static-paypal</argument>
+									</arguments>
+								</block>
+								<block class="Magento\Theme\Block\Html\Footer" name="copyright" template="html/copyright.phtml" />
+							</container>
+						</container>
+					</container>
+				</container>
+            </container>
+        </referenceContainer>
+    </body>
+</page>

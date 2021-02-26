@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <block>
+    <item>
+      <title><![CDATA[home slide1]]></title>
+      <identifier><![CDATA[home-slide1]]></identifier>
+      <content><![CDATA[<div class="home-slider home-slider-index" data-slides-to-show="1" data-slides-to-scroll="1" data-speed="400" data-autoplay-speed="6000" data-fade="false" data-dots="true" data-arrows="true" data-easing="linear" data-autoplay="true" >
+	<div class="item"> 
+		<a href="#"> <img class="img-responsive-normal" src="{{media url="wysiwyg/alothemes/static/demo1/slide1.jpg"}}" alt="magicslider" /></a>
+		<div class="container figcaption">
+			<div class="text-slide">
+			    <h3 class="caption1">The Trendy 2016</h3>
+				<h3 class="caption2">Beautiful Women's Collection</h3>
+				<h3 class="caption3">Lorem ipsum dolor sit amet, consectetur adipisicing elit, do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim adminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip  commodo consequat.</h3>
+			    <h3 class="caption4"><a class="btn-shop shop" href="#">shop now</a><a class="btn-shop promotion" href="#">promotion</a></h3>
+			</div>
+		</div>
+	</div>
+	<div class="item"> 
+		<a href="#"><img class="img-responsive-normal" src="{{media url="wysiwyg/alothemes/static/demo1/slide2.jpg"}}" alt="magicslider" /></a>
+		<div class="container figcaption">
+			<div class="text-slide text-slide2">
+				<h3 class="caption1">Fashion beauty design</h3>
+				<h3 class="caption2">Simple And Clean Deaign<br> GRACES Shop! </h3>
+				 <h3 class="caption4"><a class="btn-shop shop" href="#">shop now</a></h3>
+			</div>
+		</div>
+	</div>
+	<div class="item"> 
+		<a href="#"><img class="img-responsive-normal" src="{{media url="wysiwyg/alothemes/static/demo1/slide3.jpg"}}" alt="magicslider" /></a>
+		<div class="container figcaption">
+			<div class="text-slide text-slide3">
+				<h3 class="caption1">Special For This Season</h3>
+				<h3 class="caption2">New Product From Paris <br> Men's Elegant</h3>
+				<h3 class="caption3"><a class="btn-shop shop" href="#">shop now</a></h3>
+			</div>
+		</div>
+	</div>
+</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[cms-static-blog]]></title>
+      <identifier><![CDATA[cms-static-blog]]></identifier>
+      <content><![CDATA[<div class="cms-static-blog blog">
+<div class="container">
+<div class="contents-blog-bg">
+<div class="row">
+<div class="col-lg-12 col-md-12 col-sm-12">{{widget type="Magefan\Blog\Block\Widget\Slide" title="Latest Posts Blog" limit="8" slide="1" vertical="false" infinite="true" autoplay="true" arrows="true" dots="false" speed="300" autoplay-Speed="3000" padding="15" template="slide.phtml" rows="1" mobile="1" portrait="1" landscape="2" tablet="2" notebook="3" desktop="3" visible="3"}}</div>
+</div>
+</div>
+</div>
+</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Banner Top Menu]]></title>
+      <identifier><![CDATA[banner-top-menu]]></identifier>
+      <content><![CDATA[<div class="banner-top-menu">
+<img class="img-responsive" src="{{media url="wysiwyg/alothemes/static/banner-menu.jpg"}}" alt="" />
+</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block Sidebar Left]]></title>
+      <identifier><![CDATA[category-view-left-custom-block]]></identifier>
+      <content><![CDATA[<div class="left-image"><img class="img-responsive" src="{{media url="wysiwyg/alothemes/static/banner-left-category.jpg"}}" alt="" /></div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[block_map_contacts]]></title>
+      <identifier><![CDATA[block_map_contacts]]></identifier>
+      <content><![CDATA[<div class="col-xs-12 col-sm-12 col-md-12">
+<div class="conttact-top clearfix">
+<div><iframe style="border: 0;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.8277911385558!2d-0.13108129999999998!3d51.51637529999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2d183f5ea3%3A0x8e1c5b00f1b16579!2zMTIgT3hmb3JkIFN0LCBTb2hvLCBMb25kb24gVzFELCBWxrDGoW5nIFF14buRYyBBbmg!5e0!3m2!1svi!2s!4v1434261501432" height="350" width="600"></iframe></div>
+<div class="map-conttact">
+    <h3 class="page-subheading">Information</h3>
+<div class="Information-text">
+	<p>Proin accumsan porta miac maximus. In dapibus mollis risus, nec mattis sem gravida at. Aliquam erat volutpat. Donec pellentes tristque. Vivamus semper non semor
+felis leo sodales tincidunt at ut lectus, aliquam malesuada urna vel sagittis ullamcorper. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+dolore magna aliquyam erat, sed diam voluptua. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet Nulla facilisi. Fusce luctus purus
+semper nulla tempus. Etiam ac hendrerit lacus, nec dapibus enim. </p>
+	<ul class="store_info">
+		<li class="add"><i class="fa fa-home"></i>Graces Inc. 3233 Northbar way, California, United Stated.</li>
+		<li><i class="fa fa-phone"></i><span class="name">Phone:</span><span>(00) 1 3456 789</span></li>
+		<li><i class="fa fa-envelope"></i><span class="name">Email:</span> <span><a href="mailto:support@alothemes.com">support@alothemes.com</a></span></li>
+<li><span class="name">Open:</span> <span>8ham to 9h30pm, except Sunday</span></li>
+	</ul> 
+</div>
+</div>
+</div>	
+</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block Footer Top Demo2]]></title>
+      <identifier><![CDATA[block-footer-top]]></identifier>
+      <content><![CDATA[<div class="container">
+<div class="footer-newsletter-right block-newletter">
+	<div class="title">
+		<h3>SIGN UP & SUBSCRIBE GET 20% OFF</h3>
+<p>Be the first to know about the latest product news & get exclusive offers</p>
+	</div>
+	{{block class="Magento\Newsletter\Block\Subscribe" template="subscribe.phtml"}}
+</div>
+</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block Footer Paypal]]></title>
+      <identifier><![CDATA[cms-static-paypal]]></identifier>
+      <content><![CDATA[<div class="footer-paypal">
+						<img src="{{media url="wysiwyg/alothemes/static/paypal.png"}}" alt="" />
+					</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block All Static Demo4]]></title>
+      <identifier><![CDATA[cms-static-mix-block]]></identifier>
+      <content><![CDATA[<!-- Block Parallax-->
+<div class="content-banner content-banner-purchase clearfix">
+	<div class="banner-inner bg-parallax">
+		<h3>Design For Life - nice and clean - Made By Heart!</h3>
+	</div>
+</div>
+<!-- Block Featured Category-->
+<div class="content-banner featured-category home-slider-category clearfix">
+    <div class="container">
+	    <div class="row">
+		<div class="banner-look block-title-tabs blogtabs">
+			<h3 class="item section-title title_left"><span>Featured Category</span></h3>
+		</div>
+		<div class="home-slider" data-slides-to-show="4" data-slides-to-scroll="1" data-fade="false" data-dots="false" data-arrows="true" data-easing="linear" data-autoplay="false" 
+		data-responsive='[{"breakpoint": "1201", "settings": {"slidesToShow": "4"}}, {"breakpoint": "1200", "settings": {"slidesToShow": "4"}}, {"breakpoint": "992", "settings": {"slidesToShow": "3"}}, {"breakpoint": "769", "settings": {"slidesToShow": "3"}}, {"breakpoint": "641", "settings": {"slidesToShow": "2"}}, {"breakpoint": "481", "settings": {"slidesToShow": "1"}}, {"breakpoint": "361", "settings": {"slidesToShow": "1"}}, {"breakpoint": "1", "settings": {"slidesToShow": "1"}}]'
+		 >
+			<div class="item item-category1"> 
+				<div class="imgslide">
+					<a class="alinkslide" href="#"><img src="{{media url="wysiwyg/alothemes/static/demo4/banner-category1.jpg"}}" alt="banner" class="u-photo img-responsive" /></a>
+				</div>
+				<div class="figcaption banner-category">
+					<div class="banner-category-text">
+						<h2><a href="#">Leather Bags</a></h2>
+					</div>
+				</div>
+			</div>
+			<div class="item item-category2"> 
+				<div class="imgslide">
+					<a class="alinkslide" href="#"><img src="{{media url="wysiwyg/alothemes/static/demo4/banner-category2.jpg"}}" alt="banner" class="u-photo img-responsive" /></a>
+				</div>
+				<div class="figcaption banner-category">
+					<div class="banner-category-text">
+						<h2><a href="#">Dressess Collection</a></h2>
+					</div>
+				</div>
+			</div>
+			<div class="item item-category3"> 
+				<div class="imgslide">
+					<a class="alinkslide" href="#"><img src="{{media url="wysiwyg/alothemes/static/demo4/banner-category3.jpg"}}" alt="banner" class="u-photo img-responsive" /></a>
+				</div>
+				<div class="figcaption banner-category">
+					<div class="banner-category-text">
+						<h2><a href="#">Men's Shoes</a></h2>
+					</div>
+				</div>
+			</div>
+			<div class="item item-category4"> 
+				<div class="imgslide">
+					<a class="alinkslide" href="#"><img src="{{media url="wysiwyg/alothemes/static/demo4/banner-category4.jpg"}}" alt="banner" class="u-photo img-responsive" /></a>
+				</div>
+				<div class="figcaption banner-category">
+					<div class="banner-category-text">
+						<h2><a href="#">Men's Denim</a></h2>
+					</div>
+				</div>
+			</div>
+		    <div class="item item-category2"> 
+				<div class="imgslide">
+					<a class="alinkslide" href="#"><img src="{{media url="wysiwyg/alothemes/static/demo4/banner-category2.jpg"}}" alt="banner" class="u-photo img-responsive" /></a>
+				</div>
+				<div class="figcaption banner-category">
+					<div class="banner-category-text">
+						<h2><a href="#">Dressess Collection</a></h2>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	</div>
+</div>
+<!-- Block Banner Collection-->
+<div class="content-banner-collection clearfix">
+		<div class="bg-collection">
+			<div class="container">
+			   <div class="row">
+					<div class="content-collection">
+						<div class="collection-img-left">
+							<img src="{{media url="wysiwyg/alothemes/static/demo4/banner-collection-left.jpg"}}" alt="banner" class="u-photo img-responsive">
+						</div>
+						<div class="collection-text">
+							<h2>Latest Collection</h2>
+							<p>Condimentum libere hendrerit suscipit malesua lorem augue ipsum.</p>
+							<a class="btn-purchase button" href="#">Shop Now</a>
+						</div>
+						<div class="collection-img-right">
+							<img src="{{media url="wysiwyg/alothemes/static/demo4/banner-collection-right.jpg"}}" alt="banner" class="u-photo img-responsive">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<!-- Block Look book-->
+<div class="content-banner content-banner-2 clearfix">
+	<div class="container">
+	   <div class="row">
+			<div class="banner-look block-title-tabs blogtabs">
+				<h3 class="item section-title title_left"><span>Special Look</span></h3>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column-left">
+				<div class="item-cat item-cat1 banner-padding-bottom">
+					<a href="#">
+						<img src="{{media url="wysiwyg/alothemes/static/demo4/banner-content1.jpg"}}" alt="banner" class="u-photo img-responsive">
+						<span class="box-content-hover">
+							<span class="box-content">
+								<span class="h5-title">Suspendisse placerat</span>
+								<span class="block-price">$77.00</span>
+							 </span>
+						</span>
+					</a>
+				</div>
+				<div class="item-cat item-cat2">
+					<a href="#">
+						<img src="{{media url="wysiwyg/alothemes/static/demo4/banner-content2.jpg"}}" alt="banner" class="u-photo img-responsive">
+						<span class="box-content-hover">
+							<span class="box-content">
+								<span class="h5-title">bibendum pellentesque</span>
+								<span class="block-price">$99.00</span>
+							</span>
+						</span>
+					</a>
+				</div>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column-center">
+				<div class="item-cat item-cat3">
+					<a href="#">
+						<img src="{{media url="wysiwyg/alothemes/static/demo4/banner-content3.jpg"}}" alt="banner" class="u-photo img-responsive">
+						<span class="box-content-hover">
+							  <span class="box-content">
+								<span class="h5-title">Curabitur vulputate</span>
+								<span class="block-price">$120.00</span>
+							  </span>
+						</span>
+					</a>
+				</div>
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 column-right">
+				<div class="item-cat item-cat4 banner-padding-bottom">
+					<a href="#">
+						<img src="{{media url="wysiwyg/alothemes/static/demo4/banner-content4.jpg"}}" alt="banner" class="u-photo img-responsive">
+						<span class="box-content-hover">
+							  <span class="box-content">
+									<span class="h5-title">Aliquam consectetur</span>
+									<span class="block-price">$86.00</span>
+							   </span>
+						</span>
+					</a>
+				</div>
+				<div class="item-cat item-cat5">
+					<a href="#">
+						<img src="{{media url="wysiwyg/alothemes/static/demo4/banner-content5.jpg"}}" alt="banner" class="u-photo img-responsive">
+						<span class="box-content-hover">
+							<span class="box-content">
+								<span class="h5-title">bibendumone molestie</span>
+								<span class="block-price">$109.00</span>
+							</span>
+						</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block Footer Main Demo4]]></title>
+      <identifier><![CDATA[cms-static-main-footer]]></identifier>
+      <content><![CDATA[<div class="footer-inner">
+	<div class="container">
+		<div class="footer">
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 col-mobile-12">
+					<div class="collapsible mobile-collapsible">
+						<h3 class="heading"><span class="block-title">Contact Us</span></h3>
+						<span class="toggle-tab mobile" style="display: none;"><span class="hidden">hidden</span></span>
+						<div class="toggle-content">
+							<div class="block1 block-content-statick">
+								<ul class="address-list">
+									<li class="feature-icon first">
+										<p class="no-margin"><span class="tit-name">Address:</span><span class="tit-contain">No. 987 Sounthway St , JMC Building, California City,USA</span></p>
+									</li>
+									<li class="feature-icon">
+										<p><span class="tit-name">Phone:</span><span class="tit-contain">+001 222 456</span></p>
+									</li>
+									<li class="feature-icon">
+										<p><span class="tit-name">Email:</span><span class="tit-contain">support@alothemes.com</span></p>
+									</li>
+									<li class="feature-icon">
+										<p><span class="tit-name">Open:</span><span class="tit-contain">8:00 am - 8:30 pm</span></p>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 col-mobile-12 footer-logo-center">
+					<div class="collapsible mobile-collapsible">
+					<div class="footer-logo">
+						<a href=""><img src="{{media url="wysiwyg/alothemes/static/demo4/logo-footer.png"}}" alt="" /></a>
+					</div>
+					<span class="toggle-tab mobile" style="display: none;"><span class="hidden">hidden</span></span>
+						<div class="block-content block-content-statick toggle-content">
+							<p>Cras interdum fermentum varius enim ante luctus risus nec finibus nibh eros justo maximus scelerisque.</p>
+							<div class="social-link clearfix">
+								<a href="#" title="Facebook"><i class="fa fa-facebook"><span class="hidden">hidden</span></i></a>
+								<a href="#" title="Twitter"><i class="fa fa-twitter"><span class="hidden">hidden</span></i></a>
+								<a href="#" title="Dribbble"><i class="fa fa-dribbble"><span class="hidden">hidden</span></i></a>
+								<a href="#" title="Vimeo"><i class="fa fa-vimeo-square"><span class="hidden">hidden</span></i></a>
+								<a href="#" title="Pinterest"><i class="fa fa-pinterest-p"><span class="hidden">hidden</span></i></a> 
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 col-mobile-12">
+					<div class="collapsible mobile-collapsible">
+					<h3 class="heading"><span class="block-title">Help & Support</span></h3>
+					<span class="toggle-tab mobile" style="display: none;"><span class="hidden">hidden</span></span>
+						<div class="block-content block-content-statick toggle-content">
+							<ul class="bullet">
+								<li><a href="#">Order & Returns</a></li>
+								<li><a href="#">Shipping Guide</a></li>
+								<li><a href="#">Advance Search</a></li>
+								<li><a href="#">Affiliate</a></li>
+								<li><a href="#">Privacy & Policy</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+    <item>
+      <title><![CDATA[Block Support]]></title>
+      <identifier><![CDATA[block-support]]></identifier>
+      <content><![CDATA[<div class="header-content-left col-lg-4 col-md-4 col-sm-4 col-xs-4">
+							<div class="phone-header">
+								<div class="text-phone">
+									<span class="phone-call">Call: (00) 1 3456 789</span>
+									<span class="mail">Info@graces.com</span>
+								</div>
+								<div class="phone-icon">
+									<a href="#"><span class="lnr lnr-phone-handset"><span class="hidden">hidden</span></span></a>
+								</div>
+							</div>
+						</div>]]></content>
+      <is_active><![CDATA[1]]></is_active>
+    </item>
+  </block>
+</root>
