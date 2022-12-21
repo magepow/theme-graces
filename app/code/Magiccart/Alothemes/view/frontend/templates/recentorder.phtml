@@ -19,9 +19,10 @@ use Magento\Framework\App\Action\Action;
 <div class= "<?php /* @escapeNotVerified */ echo $selector?> recentorder suggest-slider autoplay" 
 		data-autoplay="<?php echo $this->getWidgetCfg('autoplay') ?>" 
 		data-firsttime="<?php echo $this->getWidgetCfg('firsttime') ?>" 
+		data-close_off="<?php echo $this->getWidgetCfg('close_off') ?>" 
 		data-speed="<?php echo $this->getWidgetCfg('speed') ?>" 
 	>
-	<div class="notify-slider-wrapper content-products"       
+	<div class="notify-slider-wrapper"       
 	>
 		<?php
 		$_productCollection = $block->getLoadedProductCollection();
@@ -81,7 +82,7 @@ use Magento\Framework\App\Action\Action;
 									<?php endif ?>
 		                            <?php //echo $_aloHelper->getTimer($_product); ?>
 		                            <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
-		                                <?php echo str_replace('lazyload', 'notlazy', $productImage->toHtml()); ?>
+		                                <?php echo $productImage->toHtml(); ?>
 		                            </a>
 		                        </div>
 		                        <?php if ($showWishlist || $showCompare || $showCart): ?>

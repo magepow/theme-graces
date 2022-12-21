@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -26,16 +26,16 @@ class Comments extends \Magento\Framework\View\Element\Template
     protected $_coreRegistry;
 
     /**
-     * Construct
-     *
-     * @param \Magento\Framework\View\Element\Context $context
-     * @param \Magento\Framework\Registry $coreRegistry,
-     * @param \Magento\Cms\Model\Page $post
-     * @param \Magento\Framework\Registry $coreRegistry,
-     * @param \Magento\Cms\Model\Template\FilterProvider $filterProvider
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Cms\Model\PageFactory $postFactory
-     * @param array $data
+     * @var string
+     */
+    protected $commetType;
+
+    /**
+     * Constructor
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Magento\Framework\Registry                      $coreRegistry
+     * @param \Magento\Framework\Locale\ResolverInterface      $localeResolver
+     * @param array                                            $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -61,7 +61,19 @@ class Comments extends \Magento\Framework\View\Element\Template
     public function getCommentsType()
     {
         return $this->_scopeConfig->getValue(
-            'mfblog/post_view/comments/type', ScopeInterface::SCOPE_STORE
+            'mfblog/post_view/comments/type',
+            ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function displayPrivacyPolicyCheckbox()
+    {
+        return $this->_scopeConfig->getValue(
+            'mfblog/post_view/comments/display_privacy_policy_checkbox',
+            ScopeInterface::SCOPE_STORE
         );
     }
 
@@ -72,7 +84,8 @@ class Comments extends \Magento\Framework\View\Element\Template
     public function getNumberOfComments()
     {
         return (int)$this->_scopeConfig->getValue(
-            'mfblog/post_view/comments/number_of_comments', ScopeInterface::SCOPE_STORE
+            'mfblog/post_view/comments/number_of_comments',
+            ScopeInterface::SCOPE_STORE
         );
     }
 
@@ -83,7 +96,8 @@ class Comments extends \Magento\Framework\View\Element\Template
     public function getFacebookAppId()
     {
         return $this->_scopeConfig->getValue(
-            'mfblog/post_view/comments/fb_app_id', ScopeInterface::SCOPE_STORE
+            'mfblog/post_view/comments/fb_app_id',
+            ScopeInterface::SCOPE_STORE
         );
     }
 
@@ -94,7 +108,8 @@ class Comments extends \Magento\Framework\View\Element\Template
     public function getDisqusShortname()
     {
         return $this->_scopeConfig->getValue(
-            'mfblog/post_view/comments/disqus_forum_shortname', ScopeInterface::SCOPE_STORE
+            'mfblog/post_view/comments/disqus_forum_shortname',
+            ScopeInterface::SCOPE_STORE
         );
     }
 
@@ -115,10 +130,25 @@ class Comments extends \Magento\Framework\View\Element\Template
     public function getPost()
     {
         if (!$this->hasData('post')) {
-            $this->setData('post',
+            $this->setData(
+                'post',
                 $this->_coreRegistry->registry('current_blog_post')
             );
         }
         return $this->getData('post');
+    }
+
+    /**
+     * Render block HTML
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if ($this->commetType && $this->commetType != $this->getCommentsType()) {
+            return '';
+        }
+
+        return parent::_toHtml();
     }
 }

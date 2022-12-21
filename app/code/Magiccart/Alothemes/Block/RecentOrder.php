@@ -3,8 +3,8 @@
 /**
  * @Author: nguyen
  * @Date:   2019-01-20 12:52:42
- * @Last Modified by:   Alex Dong
- * @Last Modified time: 2020-10-22 16:22:58
+ * @Last Modified by:   nguyen
+ * @Last Modified time: 2021-05-21 12:09:58
  */
 
 namespace Magiccart\Alothemes\Block;
@@ -112,6 +112,7 @@ class RecentOrder extends \Magento\Catalog\Block\Product\AbstractProduct impleme
         return [
             'autoplay',
             'firsttime',
+            'close_off',
             'speed',
         ];
     }
@@ -149,6 +150,16 @@ class RecentOrder extends \Magento\Catalog\Block\Product\AbstractProduct impleme
         return $collection;
     }
 
+    public function getPositioned()
+	{
+        $positioned = parent::getPositioned();
+        if($positioned == NULL){
+            return '';
+        }else{
+            return $positioned;
+        }
+
+	}
 
     public function getRecentOrder(){
 

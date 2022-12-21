@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -26,15 +26,23 @@ class PredispathAdminActionControllerObserver implements ObserverInterface
     protected $_backendAuthSession;
 
     /**
+     * @var \Magefan\Blog\Model\Comment\Notification
+     */
+    protected $commentNotification;
+
+    /**
      * @param \Magefan\Blog\Model\AdminNotificationFeedFactory $feedFactory
      * @param \Magento\Backend\Model\Auth\Session $backendAuthSession
+     * @param \Magefan\Blog\Model\Comment\Notification $commentNotification,
      */
     public function __construct(
         \Magefan\Blog\Model\AdminNotificationFeedFactory $feedFactory,
-        \Magento\Backend\Model\Auth\Session $backendAuthSession
+        \Magento\Backend\Model\Auth\Session $backendAuthSession,
+        \Magefan\Blog\Model\Comment\Notification $commentNotification
     ) {
         $this->_feedFactory = $feedFactory;
         $this->_backendAuthSession = $backendAuthSession;
+        $this->commentNotification = $commentNotification;
     }
 
     /**
@@ -50,6 +58,9 @@ class PredispathAdminActionControllerObserver implements ObserverInterface
             $feedModel = $this->_feedFactory->create();
             /* @var $feedModel \Magefan\Blog\Model\AdminNotificationFeed */
             $feedModel->checkUpdate();
+
+            /** Check pending blog comments */
+            $this->commentNotification->checkComments();
         }
     }
 }

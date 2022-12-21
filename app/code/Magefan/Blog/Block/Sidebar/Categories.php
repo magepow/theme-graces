@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -9,11 +9,13 @@
 namespace Magefan\Blog\Block\Sidebar;
 
 use Magento\Store\Model\ScopeInterface;
+use \Magento\Framework\View\Element\Template;
+use \Magento\Framework\DataObject\IdentityInterface;
 
 /**
  * Blog sidebar categories block
  */
-class Categories extends \Magento\Framework\View\Element\Template
+class Categories extends Template implements IdentityInterface
 {
     use Widget;
 
@@ -49,12 +51,18 @@ class Categories extends \Magento\Framework\View\Element\Template
     public function getGroupedChilds()
     {
         $k = 'grouped_childs';
-        if (!$this->hasDat($k)) {
+        if (!$this->hasData($k)) {
             $array = $this->_categoryCollection
                 ->addActiveFilter()
                 ->addStoreFilter($this->_storeManager->getStore()->getId())
                 ->setOrder('position')
                 ->getTreeOrderedArray();
+            foreach ($array as $key => $item) {
+                $maxDepth = $this->maxDepth();
+                if ($maxDepth > 0 && $item->getLevel() >= $maxDepth) {
+                    unset($array[$key]);
+                }
+            }
 
             $this->setData($k, $array);
         }
@@ -62,13 +70,48 @@ class Categories extends \Magento\Framework\View\Element\Template
         return $this->getData($k);
     }
 
+    /**
+     * Retrieve true if need to show posts count
+     * @return int
+     */
+    public function showPostsCount()
+    {
+        $key = 'show_posts_count';
+        if (!$this->hasData($key)) {
+            $this->setData($key, (bool)$this->_scopeConfig->getValue(
+                'mfblog/sidebar/'.$this->_widgetKey.'/show_posts_count',
+                ScopeInterface::SCOPE_STORE
+            ));
+        }
+        return $this->getData($key);
+    }
+
+    /**
+     * Retrieve categories maximum depth
+     * @return int
+     */
+    public function maxDepth()
+    {
+        $maxDepth = $this->_scopeConfig->getValue(
+            'mfblog/sidebar/'.$this->_widgetKey.'/max_depth',
+            ScopeInterface::SCOPE_STORE
+        );
+        
+        return (int)$maxDepth;
+    }
 
     /**
      * Retrieve block identities
+     *
      * @return array
      */
     public function getIdentities()
     {
-        return [\Magento\Cms\Model\Block::CACHE_TAG . '_blog_categories_widget'  ];
+        $identities = [];
+        foreach ($this->getGroupedChilds() as $item) {
+            $identities = array_merge($identities, $item->getIdentities());
+        }
+
+        return array_unique($identities);
     }
 }

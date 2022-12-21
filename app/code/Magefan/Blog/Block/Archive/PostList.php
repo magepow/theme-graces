@@ -1,13 +1,14 @@
 <?php
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
 
 namespace Magefan\Blog\Block\Archive;
 
+use Magefan\Blog\Block\Post\PostList\Toolbar;
 use Magento\Store\Model\ScopeInterface;
 
 /**
@@ -22,9 +23,10 @@ class PostList extends \Magefan\Blog\Block\Post\PostList
     protected function _preparePostCollection()
     {
         parent::_preparePostCollection();
-        $this->_postCollection->getSelect()
-            ->where('MONTH(publish_time) = ?', $this->getMonth())
-            ->where('YEAR(publish_time) = ?', $this->getYear());
+        $this->_postCollection->addArchiveFilter(
+            $this->getYear(),
+            $this->getMonth()
+        );
     }
 
     /**
@@ -53,42 +55,37 @@ class PostList extends \Magefan\Blog\Block\Post\PostList
     protected function _prepareLayout()
     {
         $title = $this->_getTitle();
-        $this->_addBreadcrumbs($title);
+        $this->_addBreadcrumbs($title, 'blog_search');
         $this->pageConfig->getTitle()->set($title);
 
-        return parent::_prepareLayout();
-    }
+        if ($this->config->getDisplayCanonicalTag(\Magefan\Blog\Model\Config::CANONICAL_PAGE_TYPE_ARCHIVE)) {
 
-    /**
-     * Prepare breadcrumbs
-     *
-     * @param  string $title
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @return void
-     */
-    protected function _addBreadcrumbs($title)
-    {
-        if ($this->_scopeConfig->getValue('web/default/show_cms_breadcrumbs', ScopeInterface::SCOPE_STORE)
-            && ($breadcrumbsBlock = $this->getLayout()->getBlock('breadcrumbs'))
-        ) {
-            $breadcrumbsBlock->addCrumb(
-                'home',
-                [
-                    'label' => __('Home'),
-                    'title' => __('Go to Home Page'),
-                    'link' => $this->_storeManager->getStore()->getBaseUrl()
-                ]
+            $canonicalUrl = $this->_url->getUrl(
+                $this->getYear() . '-' . str_pad($this->getMonth(), 2, '0', STR_PAD_LEFT),
+                \Magefan\Blog\Model\Url::CONTROLLER_ARCHIVE
             );
-            $breadcrumbsBlock->addCrumb(
-                'blog',
-                [
-                    'label' => __('Blog'),
-                    'title' => __('Go to Blog Home Page'),
-                    'link' => $this->_url->getBaseUrl()
-                ]
+            $page = (int)$this->_request->getParam(Toolbar::PAGE_PARM_NAME);
+            if ($page > 1) {
+                $canonicalUrl .= ((false === strpos($canonicalUrl, '?')) ? '?' : '&')
+                    . Toolbar::PAGE_PARM_NAME . '=' . $page;
+            }
+
+            $this->pageConfig->addRemotePageAsset(
+                $canonicalUrl,
+                'canonical',
+                ['attributes' => ['rel' => 'canonical']]
             );
-            $breadcrumbsBlock->addCrumb('blog_search', ['label' => $title, 'title' => $title]);
         }
+        $this->pageConfig->setRobots('NOINDEX,FOLLOW');
+
+        $pageMainTitle = $this->getLayout()->getBlock('page.main.title');
+        if ($pageMainTitle) {
+            $pageMainTitle->setPageTitle(
+                $this->escapeHtml($title)
+            );
+        }
+
+        return parent::_prepareLayout();
     }
 
     /**
@@ -100,8 +97,8 @@ class PostList extends \Magefan\Blog\Block\Post\PostList
         $time = strtotime($this->getYear().'-'.$this->getMonth().'-01');
         return sprintf(
             __('Monthly Archives: %s %s'),
-            __(date('F', $time)), date('Y', $time)
+            __(date('F', $time)),
+            date('Y', $time)
         );
     }
-
 }

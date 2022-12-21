@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -37,13 +37,13 @@ class PageIdentifierGenerator
         $this->_categoryFactory = $categoryFactory;
     }
 
-    public function generate(\Magento\Framework\Model\AbstractModel $object)
+    public function generate(\Magento\Framework\DataObject $object)
     {
         if ($object->getData('identifier')) {
             return;
         }
 
-        $identifier = trim($object->getData('title'));
+        $identifier = $object->getData('title') ? trim($object->getData('title')) : '';
         if (!$identifier) {
             return;
         }
@@ -53,7 +53,7 @@ class PageIdentifierGenerator
             'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я',
             'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я',
             'І', 'і', 'Ї', 'ї', 'Є', 'є',
-            ' & ', '&',
+            ' & ', '&', ' ', '’', '"', "'", '£', '/','[]', ':', ';', '¬', '¦', '~', '\'', '`', '.'
         ];
 
         $to = [
@@ -61,12 +61,12 @@ class PageIdentifierGenerator
             'A', 'B', 'V', 'H', 'D', 'e', 'Io', 'Z', 'Z', 'Y', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F', 'Ch', 'C', 'Ch', 'Sh', 'Shtch', '', 'Y', '', 'E', 'Iu', 'Ia',
             'a', 'b', 'v', 'h', 'd', 'e', 'io', 'z', 'z', 'y', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', 'ch', 'c', 'ch', 'sh', 'shtch', '', 'y', '', 'e', 'iu', 'ia',
             'I', 'i', 'Ji', 'ji', 'Je', 'je',
-            '-and-', '-and-',
+            '-and-', '-and-', '-', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
         ];
 
         $identifier = str_replace($from, $to, $identifier);
         $identifier = mb_strtolower($identifier);
-        $identifier = preg_replace('/[^A-Za-z0-9-]+/', '-', $identifier);
+        $identifier = preg_replace('/[?#<>@!&*()$%^\\/+=,{}\s]+/', '-', $identifier);
         $identifier = preg_replace('/[--]+/', '-', $identifier);
 
         $identifier = trim($identifier, '-');
@@ -76,7 +76,6 @@ class PageIdentifierGenerator
 
         $number = 1;
         while (true) {
-
             $finalIdentifier = $identifier . ($number > 1 ? '-'.$number : '');
 
             $postId = $post->checkIdentifier($finalIdentifier, $object->getStoreId());

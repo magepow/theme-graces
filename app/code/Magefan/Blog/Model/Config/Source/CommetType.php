@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -10,10 +10,34 @@ namespace Magefan\Blog\Model\Config\Source;
 
 /**
  * Used in creating options for commetns config value selection
- *
  */
 class CommetType implements \Magento\Framework\Option\ArrayInterface
 {
+    /**
+     * @const int
+     */
+    const DISABLED = 0;
+
+    /**
+     * @const string
+     */
+    const MAGEFAN = 'magefan';
+
+    /**
+     * @const string
+     */
+    const FACEBOOK = 'facebook';
+
+    /**
+     * @const string
+     */
+    const DISQUS = 'disqus';
+
+    /**
+     * @const string
+     */
+    const GOOGLE = 'google';
+
     /**
      * Options getter
      *
@@ -22,9 +46,11 @@ class CommetType implements \Magento\Framework\Option\ArrayInterface
     public function toOptionArray()
     {
         return [
-            ['value' => 0, 'label' => __('Disabled')],
-            ['value' => 'facebook', 'label' => __('Use Facebook Comments')],
-            ['value' => 'disqus', 'label' => __('Use Disqus Comments')],
+            ['value' => self::DISABLED, 'label' => __('Disabled')],
+            ['value' => self::MAGEFAN, 'label' => __('Use Magefan Blog Comments')],
+            ['value' => self::FACEBOOK, 'label' => __('Use Facebook Comments')],
+            ['value' => self::DISQUS, 'label' => __('Use Disqus Comments')],
+            /*['value' => self::GOOGLE, 'label' => __('Use Google Comments')],*/
         ];
     }
 
@@ -36,7 +62,7 @@ class CommetType implements \Magento\Framework\Option\ArrayInterface
     public function toArray()
     {
         $array = [];
-        foreach($this->toOptionArray() as $item) {
+        foreach ($this->toOptionArray() as $item) {
             $array[$item['value']] = $item['label'];
         }
         return $array;

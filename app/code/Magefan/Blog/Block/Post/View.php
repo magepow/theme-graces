@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -12,8 +12,18 @@ use Magento\Store\Model\ScopeInterface;
 /**
  * Blog post view
  */
-class View extends AbstractPost
+class View extends AbstractPost implements \Magento\Framework\DataObject\IdentityInterface
 {
+    /**
+     * Retrieve identities
+     *
+     * @return string
+     */
+    public function getIdentities()
+    {
+        return $this->getPost()->getIdentities();
+    }
+
     /**
      * Preparing global layout
      *
@@ -22,11 +32,32 @@ class View extends AbstractPost
     protected function _prepareLayout()
     {
         $post = $this->getPost();
-        $this->_addBreadcrumbs($post);
-        $this->pageConfig->addBodyClass('blog-post-' . $post->getIdentifier());
-        $this->pageConfig->getTitle()->set($post->getTitle());
-        $this->pageConfig->setKeywords($post->getMetaKeywords());
-        $this->pageConfig->setDescription($post->getMetaDescription());
+        if ($post) {
+            $this->_addBreadcrumbs($post->getTitle(), 'blog_post');
+            $this->pageConfig->addBodyClass('blog-post-' . $post->getIdentifier());
+            $this->pageConfig->getTitle()->set($post->getMetaTitle());
+            $this->pageConfig->setKeywords($post->getMetaKeywords());
+            $this->pageConfig->setDescription($post->getMetaDescription());
+
+            if ($this->config->getDisplayCanonicalTag(\Magefan\Blog\Model\Config::CANONICAL_PAGE_TYPE_POST)) {
+                $this->pageConfig->addRemotePageAsset(
+                    $post->getCanonicalUrl(),
+                    'canonical',
+                    ['attributes' => ['rel' => 'canonical']]
+                );
+            }
+
+            $pageMainTitle = $this->getLayout()->getBlock('page.main.title');
+            if ($pageMainTitle) {
+                $pageMainTitle->setPageTitle(
+                    $this->escapeHtml($post->getTitle())
+                );
+            }
+
+            if ($post->getIsPreviewMode()) {
+                $this->pageConfig->setRobots('NOINDEX,FOLLOW');
+            }
+        }
 
         return parent::_prepareLayout();
     }
@@ -34,14 +65,14 @@ class View extends AbstractPost
     /**
      * Prepare breadcrumbs
      *
-     * @param \Magefan\Blog\Model\Post $post
+     * @param  string $title
+     * @param  string $key
      * @throws \Magento\Framework\Exception\LocalizedException
      * @return void
      */
-    protected function _addBreadcrumbs(\Magefan\Blog\Model\Post $post)
+    protected function _addBreadcrumbs($title = null, $key = null)
     {
-        if ($this->_scopeConfig->getValue('web/default/show_cms_breadcrumbs', ScopeInterface::SCOPE_STORE)
-            && ($breadcrumbsBlock = $this->getLayout()->getBlock('breadcrumbs'))
+        if ($breadcrumbsBlock = $this->getLayout()->getBlock('breadcrumbs')
         ) {
             $breadcrumbsBlock->addCrumb(
                 'home',
@@ -51,19 +82,61 @@ class View extends AbstractPost
                     'link' => $this->_storeManager->getStore()->getBaseUrl()
                 ]
             );
+
+            $blogTitle = $this->_scopeConfig->getValue(
+                'mfblog/index_page/title',
+                ScopeInterface::SCOPE_STORE
+            );
             $breadcrumbsBlock->addCrumb(
                 'blog',
                 [
-                    'label' => __('Blog'),
-                    'title' => __('Go to Blog Home Page'),
+                    'label' => __($blogTitle),
+                    'title' => __($blogTitle),
                     'link' => $this->_url->getBaseUrl()
                 ]
             );
-            $breadcrumbsBlock->addCrumb('blog_post', [
-                'label' => $post->getTitle(),
-                'title' => $post->getTitle()
+
+            $parentCategories = [];
+            $parentCategory = $this->getPost()->getParentCategory();
+            while ($parentCategory) {
+                if (isset($parentCategories[$parentCategory->getId()])) {
+                    break;
+                }
+                $parentCategories[$parentCategory->getId()] = $parentCategory;
+                $parentCategory = $parentCategory->getParentCategory();
+            }
+            $parentCategories = array_values($parentCategories);
+
+            for ($i = count($parentCategories) - 1; $i >= 0; $i--) {
+                $parentCategory = $parentCategories[$i];
+                $breadcrumbsBlock->addCrumb('blog_parent_category_' . $parentCategory->getId(), [
+                    'label' => $parentCategory->getTitle(),
+                    'title' => $parentCategory->getTitle(),
+                    'link'  => $parentCategory->getCategoryUrl()
+                ]);
+            }
+
+            $breadcrumbsBlock->addCrumb($key, [
+                'label' => $title ,
+                'title' => $title
             ]);
         }
     }
 
+    /**
+     * Get relevant path to template
+     *
+     * @return string
+     */
+    public function getTemplate()
+    {
+        $templateName = (string)$this->_scopeConfig->getValue(
+            'mfblog/post_view/design/template',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        if ($template = $this->templatePool->getTemplate('blog_post_view', $templateName)) {
+            $this->_template = $template;
+        }
+        return parent::getTemplate();
+    }
 }

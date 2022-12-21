@@ -24,7 +24,8 @@
             </widescreen>
             <category_page>
                 <page_layout></page_layout>
-                <config_display><![CDATA[{"_1601090070156_156":{"title":"Show Cart","selector":".actions-cart, .tocart","enabled":"1"},"_1601090072720_720":{"title":"Show Compare","selector":".tocompare","enabled":"1"},"_1601090074061_61":{"title":"Show Wishlist","selector":".towishlist","enabled":"1"},"_1601090074700_700":{"title":"Show Quickview","selector":".link-view","enabled":"1"},"_1601090075319_319":{"title":"Show Review","selector":".product-reviews-summary","enabled":"1"},"_1601953500959_959":{"title":"Stock Status","selector":".product-item .stock","enabled":"1"},"_1601953611355_355":{"title":"Price","selector":".product-item .price-box","enabled":"1"}}]]></config_display>
+                <gridview>1</gridview>
+                <config_display><![CDATA[{"_1601090070156_156":{"title":"Show Cart","selector":".catalog-category-view .product-item .actions-cart, .product-item .tocart","enabled":"1"},"_1601090072720_720":{"title":"Show Compare","selector":".catalog-category-view .product-item .tocompare","enabled":"1"},"_1601090074061_61":{"title":"Show Wishlist","selector":".catalog-category-view .product-item .towishlist","enabled":"1"},"_1601090074700_700":{"title":"Show Quickview","selector":".catalog-category-view .product-item .link-view","enabled":"1"},"_1601090075319_319":{"title":"Show Review","selector":".catalog-category-view .product-item .product-reviews-summary","enabled":"1"},"_1601953500959_959":{"title":"Stock Status","selector":".catalog-category-view .product-item .stock","enabled":"1"},"_1601953611355_355":{"title":"Price","selector":".catalog-category-view .product-item .price-box","enabled":"1"},"_1625731086274_274":{"title":"View Mode 4 Column","selector":".grid-view-mode .grid-4","enabled":"1"},"_1625731097543_543":{"title":"View Mode 3 Column","selector":".grid-view-mode .grid-3","enabled":"1"},"_1625731097323_323":{"title":"View Mode 2 Column","selector":".grid-view-mode .grid-2","enabled":"1"},"_1625731097058_58":{"title":"View Mode 1 Column","selector":".grid-view-mode .grid-1","enabled":"1"}}]]></config_display>
                 <cart>1</cart>
                 <compare>1</compare>
                 <wishlist>1</wishlist>
@@ -42,6 +43,7 @@
                 <widescreen>3</widescreen>
                 <visible>3</visible>
                 <padding>15</padding>
+                <visible_plus>5</visible_plus>
             </grid>
             <product_page>
                 <page_layout></page_layout>
@@ -145,7 +147,8 @@
                 <limit>10</limit>
                 <autoplay>1</autoplay>
                 <firsttime>3000</firsttime>
-                <speed>9000</speed>
+                <speed>12000</speed>
+                <close_off>1</close_off>
             </recentorder>
             <labels>
                 <newText>New</newText>
@@ -160,6 +163,7 @@
             <categorysearch>
                 <enabled>0</enabled>
                 <depth>0</depth>
+                <level_symbol>*</level_symbol>
             </categorysearch>
             <newsletter>
                 <enabled>1</enabled>
@@ -177,6 +181,9 @@
                 <google>Raleway</google>
                 <custom>Open Sans</custom>
             </font>
+            <css>
+                <merge_css_files>1</merge_css_files>
+            </css>
         </alothemes>
         <alodesign>
             <general>

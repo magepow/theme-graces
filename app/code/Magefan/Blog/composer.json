@@ -1,16 +1,18 @@
 {
     "name": "magefan/module-blog",
     "description": "Implements Blog functionality on Magento 2 store",
-    "type": "magento2-module",
-    "version": "2.0.2",
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
     "require": {
-        "php": "~5.5.0|~5.6.0|~7.0",
-        "magento/magento-composer-installer": "*"
+        "magefan/module-community" : ">=2.1.10",
+        "magefan/module-blog-graph-ql" : ">=2.1.7",
+        "magefan/module-wysiwyg-advanced" : ">=2.0.12"
     },
+   "suggest": {
+        "magefan/module-blog-comments-recaptcha": "Install this module to activate ReCaptcha on blog comments form to protect against spam.",
+        "magefan/module-blog-graph-ql": "Install this module to activate GraphQl integration for the blog.",
+        "magefan/module-blog-amp": "Install this module to activate Blog integration with the Plumrocket AMP extension."
+    },
+    "type": "magento2-module",
+    "version": "2.10.10",
     "autoload": {
         "files": [ "registration.php" ],
         "psr-4": {

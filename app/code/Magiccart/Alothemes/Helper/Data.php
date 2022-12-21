@@ -31,6 +31,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected $pageConfig;
 
     /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    protected $_storeManager;
+
+    /**
      * Catalog Design
      *
      * @var \Magento\Catalog\Model\Design
@@ -38,20 +43,46 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     private $catalogDesign;
 
+    private $store;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\View\Page\Config $pageConfig,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\Design $catalogDesign
     )
     {
         parent::__construct($context);
         $this->pageConfig     = $pageConfig;
+        $this->_storeManager  = $storeManager;
         $this->catalogDesign  = $catalogDesign;
-        $this->configModule   = $this->getConfig('alothemes');
+        $this->store          = $this->_getRequest()->getParam('store', null);
+        $this->configModule   = $this->getConfig('alothemes', $this->store);
     }
-    public function getConfig($cfg='')
+
+    /**
+     * Get store manager
+     *
+     * @return \Magento\Store\Model\StoreManagerInterface
+     */
+    public function getStoreManager()
     {
-        if($cfg) return $this->scopeConfig->getValue( $cfg, \Magento\Store\Model\ScopeInterface::SCOPE_STORE );
+        return $this->_storeManager;
+    }
+
+    /**
+     * Get store manager
+     *
+     * @return \Magento\Store\Model\StoreManagerInterface
+     */
+    public function getUrlMedia($image=null)
+    {
+        return $this->getStoreManager()->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . $image;
+    }
+
+    public function getConfig($cfg='', $store = null)
+    {
+        if($cfg) return $this->scopeConfig->getValue( $cfg, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $store );
         return $this->scopeConfig;
     }
 
@@ -105,7 +136,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->getConfigArraySerialized($value);
     }
 
-    public function getTimer($_product)
+    public function getTimer($_product, $layout='')
     {
         if($this->_timer==null) $this->_timer = $this->getThemeCfg('timer');
         if(!$this->_timer['enabled']) return;
@@ -115,7 +146,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $date = 0;
                 foreach ($products as $child) {
                     if ($child->isSaleable()) {
-                        $fromDate   = $child->getSpecialFromDate();
+                        $fromDate   = $child->getSpecialFromDate() ?? '';
                         if( ($now - strtotime($fromDate)) < 0 ) continue;
                         $toDate     = $child->getSpecialToDate();
                         if(!$toDate) continue;
@@ -132,14 +163,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 }        
         }
 
-        $fromDate   = $_product->getSpecialFromDate();
+        $fromDate   = $_product->getSpecialFromDate() ?? '';
         if( ($now - strtotime($fromDate)) < 0 ) return;
         $toDate     = $_product->getSpecialToDate();
         if(!$toDate) return;
         if($_product->getPrice() < $_product->getSpecialPrice()) return;
         if($_product->getSpecialPrice() == 0 || $_product->getSpecialPrice() == "") return;
         $timer = strtotime($toDate) - $now;
-        return ($timer > 0) ? '<div class="alo-count-down"><div class="countdown" data-timer="' .$timer. '"></div></div>' : '';
+        return ($timer > 0) ? '<div class="alo-count-down"><div class="countdown" data-timer="' .$timer. '">' . $layout . '</div></div>' : '';
 
         $now = new \DateTime();
         $ends = new \DateTime($toDate);
@@ -210,8 +241,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     protected function isOnSale($_product)
     {
-        $specialPrice = number_format($_product->getFinalPrice(), 2);
-        $regularPrice = number_format($_product->getPrice(), 2);
+        $specialPrice = number_format($_product->getFinalPrice() ?? 0, 2);
+        $regularPrice = number_format($_product->getPrice() ?? 0, 2);
 
         if ($specialPrice != $regularPrice){
 
@@ -227,7 +258,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         if ($fromDate){
             $fromDate = strtotime($fromDate);
-            $toDate = strtotime($toDate);
+            $toDate = strtotime($toDate ?? '');
             $now = strtotime(date("Y-m-d H:i:s"));
             
             if ($toDate){
@@ -243,39 +274,54 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return false;
     }
 
-    public function getPrcents()
-    {
-        return array(1 => '100%', 2 => '50%', 3 => '33.333333333%', 4 => '25%', 5 => '20%', 6 => '16.666666666%', 7 => '14.285714285%', 8 => '12.5%');
-    }
-
     public function getResponsiveBreakpoints()
     {
         return Responsive::getBreakpoints();
-        return array(1921=>'visible', 1920=>'widescreen', 1480=>'desktop', 1200=>'laptop', 992=>'notebook', 768=>'tablet', 576=>'landscape', 481=>'portrait', 361=>'mobile', 1=>'mobile');
     }
 
-    public function getGridStyle($selector=' .products-grid .product-item', $path='alothemes/grid')
+    public function getGridStyle($selector=' .products-grid .product-item', $path='grid')
     {
         $rtl     = $this->getThemeCfg('rtl');
         $float   = (isset($rtl['enabled']) && $rtl['enabled']) ? 'right' : 'left';
         $styles  = $selector .'{ float: ' . $float .';}';
-        $listCfg = $this->getConfig($path);
+        $listCfg = $this->getConfigModule($path);
         $padding = $listCfg['padding'];
-        $prcents = $this->getPrcents();
         $breakpoints = $this->getResponsiveBreakpoints(); ksort($breakpoints);
         $total = count($breakpoints);
         $i = $tmp = 1;
+        if($this->getPageLayout() == '1column' && isset($listCfg['visible_plus'])){
+            $listCfg['visible'] = $listCfg['visible_plus'];
+        }
         foreach ($breakpoints as $key => $value) {
             $tmpKey = ( $i == 1 || $i == $total) ? $value : current($breakpoints);
             if($i >1){
-                $styles .= ' @media (min-width: '. $tmp .'px) and (max-width: ' . ($key-1) . 'px) {' .$selector. '{padding: 0 '.$padding.'px; width: '.$prcents[$listCfg[$value]] .'} ' .$selector. ':nth-child(' .$listCfg[$value]. 'n+1){clear: ' . $float . ';}}';
+                $styles .= ' @media (min-width: '. $tmp .'px) and (max-width: ' . ($key-1) . 'px) {' .$selector. '{padding: 0 '.$padding.'px; width: calc(100% / ' . $listCfg[$value] . ')} ' .$selector. ':nth-child(' .$listCfg[$value]. 'n+1){clear: ' . $float . ';}}';
                 next($breakpoints);
             }
-            if( $i == $total ) $styles .= ' @media (min-width: ' . $key . 'px) {' .$selector. '{padding: 0 '.$padding.'px; width: '.$prcents[$listCfg[$value]] .'} ' .$selector. ':nth-child(' .$listCfg[$value]. 'n+1){clear: ' . $float . ';}}';
+            if( $i == $total ) $styles .= ' @media (min-width: ' . $key . 'px) {' .$selector. '{padding: 0 '.$padding.'px; width: calc(100% / ' . $listCfg[$value] . ')} ' .$selector. ':nth-child(' .$listCfg[$value]. 'n+1){clear: ' . $float . ';}}';
             $tmp = $key;
             $i++;
         }
-        return  '<style type="text/css">' .$styles. '</style>';
+        return  '<style type="text/css" class="grid-view-style">' .$styles. '</style>';
+    }
+
+    public function getCategoryOptions()
+    {
+        $options = [];
+        $listCfg = $this->getConfigModule('grid');
+        $padding = $listCfg['padding'];
+        $gridMax  = 0;
+        $breakpoints = $this->getResponsiveBreakpoints(); ksort($breakpoints);
+        $isOnecolumn = ($this->getPageLayout() == '1column');
+        if($isOnecolumn && isset($listCfg['visible_plus'])){
+            $listCfg['visible'] = $listCfg['visible_plus'];
+        }
+        foreach ($breakpoints as $size => $screen) {
+            if( $listCfg[$screen] > $gridMax ) $gridMax = $listCfg[$screen];
+            $options[]= [$size-1 => $listCfg[$screen]];
+        }
+        if($isOnecolumn) $gridMax--;
+        return ['grid-max' => $gridMax, 'padding' => $listCfg['padding'], 'responsive' => json_encode($options)];
     }
 
     public function getConfgRUC($type) // with Type = 'related' || 'upsell' || 'crosssell'
@@ -306,25 +352,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             foreach ($breakpoints as $size => $screen) {
                 $options[]= array($size => $data[$screen]);
             }
-            return array('padding' => $data['padding'], 'responsive' =>json_encode($options));
-            
-            // $prcents = $this->getPrcents();
-            // $padding = $data['padding'];
-            // $selector = '.' . $type .' .products-grid .product-item';
-            // $styles = $selector .'{ float: left;}';
-            // $i = $tmp= 1;
-            // foreach ($breakpoints as $key => $value) {
-            //     $tmpKey = ( $i == 1 || $i == $total ) ? $value : current($breakpoints);
-            //     if($i >1){
-            //         $styles .= ' @media (min-width: '. $tmp .'px) and (max-width: ' . ($key-1) . 'px) {' .$selector. '{padding: 0 '.$padding.'px; width: '.$prcents[$data[$value]] .'} ' .$selector. ':nth-child(' .$data[$value]. 'n+1){clear: left;}}';
-            //         next($breakpoints);
-            //     }
-            //     if( $i == $total ) $styles .= ' @media (min-width: ' . $key . 'px) {' .$selector. '{padding: 0 '.$padding.'px; width: '.$prcents[$data[$value]] .'} ' .$selector. ':nth-child(' .$data[$value]. 'n+1){clear: left;}}';
-            //     $tmp = $key;
-            //     $i++;
-            // }
 
-            // return '<style type="text/css">' .$styles. '</style>';
+            return array('padding' => $data['padding'], 'responsive' =>json_encode($options));
         }
     }
 
@@ -368,4 +397,49 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $freeshipping;
     }
+
+    public function generalCss()
+    {
+        $cfg = $this->getThemeCfg();
+        $css ='';
+        $fontCfg   = $cfg['font'];
+        $font      = $fontCfg['google'] ? $fontCfg['google'] : $fontCfg['custom'];
+        /* CssGenerator */
+        $css  .= 'body{font-size: ' . $fontCfg['size'] . ';';
+        if($font) $css  .= "font-family: '" . $font . "', sans-serif";
+        $css  .= '}';
+        if(isset($cfg['extra_css']['style'])) $css .= $cfg['extra_css']['style'];
+        $design = $this->getConfig('alodesign', $this->store);
+
+        if (is_array($design) || is_object($design)){
+            foreach ($design as $group => $options) 
+            {
+                foreach ($options as $property => $values) {
+                    if(!$values) continue;
+                    $tmp = json_decode($values, true);
+                    if(json_last_error() == JSON_ERROR_NONE){
+                        $values = $tmp;
+                    } else {
+                        $values = @unserialize($values);
+                    }
+                    if(is_array($values) || is_object($values)){
+                        foreach ($values as $value) {
+                            if(!$value) continue;
+                            $css .= htmlspecialchars_decode($value['selector']) .'{';
+                                $css .= empty($value['color'])      ? '' : 'color:' .$value['color']. ';';
+                                $css .= empty($value['background']) ? '' : ' background-color:' .$value['background']. ';';
+                                $css .= empty($value['border'])     ? '' : ' border-color:' .$value['border']. ';';
+                            $css .= '}';
+                        }               
+                    }
+
+                }
+            }
+        }
+
+        if(isset($design['extra_css']['color'])) $css .= $design['extra_css']['color'];
+
+        return $css;
+    }
+
 }

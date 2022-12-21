@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -13,10 +13,10 @@ namespace Magefan\Blog\Controller\Adminhtml;
  */
 class Post extends Actions
 {
-	/**
-	 * Form session key
-	 * @var string
-	 */
+    /**
+     * Form session key
+     * @var string
+     */
     protected $_formSessionKey  = 'blog_post_form_data';
 
     /**
@@ -29,7 +29,7 @@ class Post extends Actions
      * Model class name
      * @var string
      */
-    protected $_modelClass      = 'Magefan\Blog\Model\Post';
+    protected $_modelClass      = \Magefan\Blog\Model\Post::class;
 
     /**
      * Active menu key
@@ -42,10 +42,4 @@ class Post extends Actions
      * @var string
      */
     protected $_statusField     = 'is_active';
-
-    /**
-     * Save request params key
-     * @var string
-     */
-    protected $_paramsHolder 	= 'post';
 }

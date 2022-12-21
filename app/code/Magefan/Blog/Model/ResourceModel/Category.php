@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -13,6 +13,26 @@ namespace Magefan\Blog\Model\ResourceModel;
  */
 class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
+    /**
+     * @var \Magento\Framework\Stdlib\DateTime
+     */
+    protected $dateTime;
+
+    /**
+     * Construct
+     *
+     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
+     * @param \Magento\Framework\Stdlib\DateTime $dateTime
+     * @param string|null $resourcePrefix
+     */
+    public function __construct(
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Framework\Stdlib\DateTime $dateTime,
+        $resourcePrefix = null
+    ) {
+        parent::__construct($context, $resourcePrefix);
+        $this->dateTime = $dateTime;
+    }
 
     /**
      * Initialize resource model
@@ -50,19 +70,31 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
     {
+        foreach (['custom_theme_from', 'custom_theme_to'] as $field) {
+            $value = $object->getData($field) ?: null;
+            $object->setData($field, $this->dateTime->formatDate($value));
+        }
+
         $identifierGenerator = \Magento\Framework\App\ObjectManager::getInstance()
-                ->create('Magefan\Blog\Model\ResourceModel\PageIdentifierGenerator');
+                ->create(\Magefan\Blog\Model\ResourceModel\PageIdentifierGenerator::class);
         $identifierGenerator->generate($object);
 
         if (!$this->isValidPageIdentifier($object)) {
             throw new \Magento\Framework\Exception\LocalizedException(
-                __('The category URL key contains capital letters or disallowed symbols.')
+                __('The category URL key contains disallowed symbols.')
             );
         }
 
         if ($this->isNumericPageIdentifier($object)) {
             throw new \Magento\Framework\Exception\LocalizedException(
                 __('The category URL key cannot be made of only numbers.')
+            );
+        }
+
+        $id = $this->checkIdentifier($object->getData('identifier'), $object->getData('store_ids'));
+        if ($id && $id !== $object->getId()) {
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('URL key is already in use by another blog item.')
             );
         }
 
@@ -77,16 +109,15 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _afterSave(\Magento\Framework\Model\AbstractModel $object)
     {
-        $oldStores = $this->lookupStoreIds($object->getId());
-        $newStores = (array)$object->getStores();
-
-        if (empty($newStores)) {
-            $newStores = (array)$object->getStoreId();
+        $oldStoreIds = $this->lookupStoreIds($object->getId());
+        $newStoreIds = (array)$object->getStoreIds();
+        if (!$newStoreIds || in_array(0, $newStoreIds)) {
+            $newStoreIds = [0];
         }
 
         $table = $this->getTable('magefan_blog_category_store');
-        $insert = array_diff($newStores, $oldStores);
-        $delete = array_diff($oldStores, $newStores);
+        $insert = array_diff($newStoreIds, $oldStoreIds);
+        $delete = array_diff($oldStoreIds, $newStoreIds);
 
         if ($delete) {
             $where = ['category_id = ?' => (int)$object->getId(), 'store_id IN (?)' => $delete];
@@ -117,7 +148,7 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
     {
-        if (!is_numeric($value) && is_null($field)) {
+        if (!is_numeric($value) && null === $field) {
             $field = 'identifier';
         }
 
@@ -133,8 +164,8 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _afterLoad(\Magento\Framework\Model\AbstractModel $object)
     {
         if ($object->getId()) {
-            $stores = $this->lookupStoreIds($object->getId());
-            $object->setData('store_id', $stores);
+            $storeIds = $this->lookupStoreIds($object->getId());
+            $object->setData('store_ids', $storeIds);
         }
 
         return parent::_afterLoad($object);
@@ -148,7 +179,7 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param int $storeId
      * @return int
      */
-    protected function _getLoadByIdentifierSelect($identifier, $store, $isActive = null)
+    protected function _getLoadByIdentifierSelect($identifier, $storeIds)
     {
         $select = $this->getConnection()->select()->from(
             ['cp' => $this->getMainTable()]
@@ -161,12 +192,9 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $identifier
         )->where(
             'cps.store_id IN (?)',
-            $store
+            $storeIds
         );
 
-        if (!is_null($isActive)) {
-            $select->where('cp.is_active = ?', $isActive);
-        }
         return $select;
     }
 
@@ -189,7 +217,7 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function isValidPageIdentifier(\Magento\Framework\Model\AbstractModel $object)
     {
-        return preg_match('/^[a-z0-9][a-z0-9_\/-]+(\.[a-z0-9_-]+)?$/', $object->getData('identifier'));
+        return preg_match('/^([^?#<>@!&*()$%^\\+=,{}"\']+)?$/', $object->getData('identifier'));
     }
 
     /**
@@ -200,13 +228,13 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param int|array $storeId
      * @return int
      */
-    public function checkIdentifier($identifier, $stores)
+    public function checkIdentifier($identifier, $storeIds)
     {
-        if (!is_array($stores)) {
-            $stores = [$stores];
+        if (!is_array($storeIds)) {
+            $storeIds = [$storeIds];
         }
-        $stores[] = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
-        $select = $this->_getLoadByIdentifierSelect($identifier, $stores, 1);
+        $storeIds[] = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+        $select = $this->_getLoadByIdentifierSelect($identifier, $storeIds);
         $select->reset(\Zend_Db_Select::COLUMNS)->columns('cp.category_id')->order('cps.store_id DESC')->limit(1);
 
         return $this->getConnection()->fetchOne($select);
@@ -215,7 +243,7 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Get store ids to which specified item is assigned
      *
-     * @param int $pageId
+     * @param int $categoryId
      * @return array
      */
     public function lookupStoreIds($categoryId)
@@ -232,5 +260,4 @@ class Category extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         return $adapter->fetchCol($select);
     }
-
 }

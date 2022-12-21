@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -17,6 +17,7 @@ abstract class AbstractPost extends \Magento\Framework\View\Element\Template
 {
 
     /**
+     * Deprecated property. Do not use it.
      * @var \Magento\Cms\Model\Template\FilterProvider
      */
     protected $_filterProvider;
@@ -34,14 +35,14 @@ abstract class AbstractPost extends \Magento\Framework\View\Element\Template
     protected $_postFactory;
 
     /**
-     * @var Magento\Framework\Registry
+     * @var \Magento\Framework\Registry
      */
     protected $_coreRegistry;
 
     /**
      * @var string
      */
-    protected $_defaultPostInfoBlock = 'Magefan\Blog\Block\Post\Info';
+    protected $_defaultPostInfoBlock = \Magefan\Blog\Block\Post\Info::class;
 
     /**
      * @var \Magefan\Blog\Model\Url
@@ -49,15 +50,27 @@ abstract class AbstractPost extends \Magento\Framework\View\Element\Template
     protected $_url;
 
     /**
-     * Construct
-     *
-     * @param \Magento\Framework\View\Element\Context $context
-     * @param \Magento\Cms\Model\Page $post
-     * @param \Magento\Framework\Registry $coreRegistry,
+     * @var \Magefan\Blog\Model\Config
+     */
+    protected $config;
+
+    /**
+     * @var \Magefan\Blog\Model\TemplatePool
+     */
+    protected $templatePool;
+
+    /**
+     * AbstractPost constructor.
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Magefan\Blog\Model\Post $post
+     * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Cms\Model\Template\FilterProvider $filterProvider
-     * @param \Magento\Cms\Model\PageFactory $postFactory
+     * @param \Magefan\Blog\Model\PostFactory $postFactory
      * @param \Magefan\Blog\Model\Url $url
+     * @param \Magefan\Blog\Model\Config $config
      * @param array $data
+     * @param null $config
+     * @param null $templatePool
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -66,7 +79,9 @@ abstract class AbstractPost extends \Magento\Framework\View\Element\Template
         \Magento\Cms\Model\Template\FilterProvider $filterProvider,
         \Magefan\Blog\Model\PostFactory $postFactory,
         \Magefan\Blog\Model\Url $url,
-        array $data = []
+        array $data = [],
+        $config = null,
+        $templatePool = null
     ) {
         parent::__construct($context, $data);
         $this->_post = $post;
@@ -74,6 +89,14 @@ abstract class AbstractPost extends \Magento\Framework\View\Element\Template
         $this->_filterProvider = $filterProvider;
         $this->_postFactory = $postFactory;
         $this->_url = $url;
+
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $this->config = $config ?: $objectManager->get(
+            \Magefan\Blog\Model\Config::class
+        );
+        $this->templatePool = $templatePool ?: $objectManager->get(
+            \Magefan\Blog\Model\TemplatePool::class
+        );
     }
 
     /**
@@ -84,7 +107,8 @@ abstract class AbstractPost extends \Magento\Framework\View\Element\Template
     public function getPost()
     {
         if (!$this->hasData('post')) {
-            $this->setData('post',
+            $this->setData(
+                'post',
                 $this->_coreRegistry->registry('current_blog_post')
             );
         }
@@ -94,21 +118,13 @@ abstract class AbstractPost extends \Magento\Framework\View\Element\Template
     /**
      * Retrieve post short content
      *
+     * @param  mixed $len
+     * @param  mixed $endСharacters
      * @return string
      */
-    public function getShorContent()
+    public function getShorContent($len = null, $endСharacters = null)
     {
-        $content = $this->getPost()->getContent();
-        $pageBraker = '<!-- pagebreak -->';
-        
-        $isMb = function_exists('mb_strpos');
-        $p = $isMb ? strpos($content, $pageBraker) : mb_strpos($content, $pageBraker);
-
-        if ($p) {
-            $content = substr($content, 0, $p);
-        }
-
-        return $this->_filterProvider->getPageFilter()->filter($content);
+        return $this->getPost()->getShortFilteredContent($len, $endСharacters);
     }
 
     /**
@@ -118,11 +134,7 @@ abstract class AbstractPost extends \Magento\Framework\View\Element\Template
      */
     public function getContent()
     {
-        return $this->_filterProvider->getPageFilter()->filter(
-            $this->getPost()->getContent()
-        );
-
-        return $this->getData($k);
+        return $this->getPost()->getFilteredContent();
     }
 
     /**
@@ -159,4 +171,80 @@ abstract class AbstractPost extends \Magento\Framework\View\Element\Template
         return $this->getData($k)->setPost($this->getPost());
     }
 
+    /**
+     * Retrieve 1 if display author information is enabled
+     * @return int
+     */
+    public function authorEnabled()
+    {
+        return (int) $this->_scopeConfig->getValue(
+            'mfblog/author/enabled',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * Retrieve 1 if author page is enabled
+     * @return int
+     */
+    public function authorPageEnabled()
+    {
+        return (int) $this->_scopeConfig->getValue(
+            'mfblog/author/page_enabled',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * Retrieve true if magefan comments are enabled
+     * @return bool
+     */
+    public function magefanCommentsEnabled()
+    {
+        return $this->_scopeConfig->getValue(
+            'mfblog/post_view/comments/type',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        ) == \Magefan\Blog\Model\Config\Source\CommetType::MAGEFAN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function viewsCountEnabled()
+    {
+        return (bool)$this->_scopeConfig->getValue(
+            'mfblog/post_view/views_count/enabled',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * @return \Magefan\Blog\ViewModel\Style
+     */
+    public function getStyleViewModel()
+    {
+        $viewModel = $this->getData('style_view_model');
+        if (!$viewModel) {
+            $viewModel = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magefan\Blog\ViewModel\Style::class);
+            $this->setData('style_view_model', $viewModel);
+        }
+
+        return $viewModel;
+    }
+
+    /**
+     * Check if AddThis Enabled and key exist
+     *
+     * @return bool
+     */
+    public function displayAddThisToolbox()
+    {
+        $isSocialEnabled = $this->_scopeConfig->getValue(
+            'mfblog/social/add_this_enabled', ScopeInterface::SCOPE_STORE);
+        $isSocialIdExist = $this->_scopeConfig->getValue(
+            'mfblog/social/add_this_pubid', ScopeInterface::SCOPE_STORE);
+
+        return $isSocialEnabled && $isSocialIdExist;
+    }
 }

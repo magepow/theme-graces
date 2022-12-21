@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -9,7 +9,7 @@
 namespace Magefan\Blog\Block;
 
 /**
- * Class Link
+ * Class Link block
  */
 class Link extends \Magento\Framework\View\Element\Html\Link
 {
@@ -38,5 +38,33 @@ class Link extends \Magento\Framework\View\Element\Html\Link
     public function getHref()
     {
         return $this->_url->getBaseUrl();
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->_scopeConfig->getValue(
+            \Magefan\Blog\Model\Config::XML_PATH_HOMEPAGE_TITLE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * Render block HTML
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if (!$this->_scopeConfig->getValue(
+            \Magefan\Blog\Model\Config::XML_PATH_EXTENSION_ENABLED,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        )) {
+            return '';
+        }
+
+        return parent::_toHtml();
     }
 }

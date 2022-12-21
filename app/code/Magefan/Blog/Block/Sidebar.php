@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -26,7 +26,7 @@ class Sidebar extends \Magento\Framework\View\Element\Text
         $this->setText('');
         $childNames = $this->getChildNames();
 
-        usort($childNames, array($this, 'sortChilds'));
+        usort($childNames, [$this, 'sortChilds']);
 
         $layout = $this->getLayout();
         foreach ($childNames as $child) {
@@ -52,5 +52,4 @@ class Sidebar extends \Magento\Framework\View\Element\Text
             return $r;
         }
     }
-
 }

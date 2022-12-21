@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -27,12 +27,38 @@ class Rss extends \Magento\Framework\View\Element\Template
     protected $_months;
 
     /**
-     * Retrieve blog identities
-     * @return array
+     * @var \Magefan\Blog\Model\Url
      */
-    public function getIdentities()
+    private $blogUrl;
+
+    /**
+     * Generate url by route and parameters
+     *
+     * @param   string $route
+     * @param   array $params
+     * @return  string
+     */
+    public function getUrl($route = '', $params = [])
     {
-        return [\Magento\Cms\Model\Block::CACHE_TAG . '_blog_rss_widget'  ];
+        if ('blog/rss/feed' == $route && empty($params)) {
+             return $this->getBlogUrl()->getUrl('feed', 'rss');
+        }
+        return parent::getUrl($route, $params);
     }
 
+
+    /**
+     * Retrieve blog url model
+     *
+     * @return  \Magefan\Blog\Model\Url
+     */
+    private function getBlogUrl()
+    {
+        if (null === $this->blogUrl) {
+            $this->blogUrl = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magefan\Blog\Model\Url::class);
+        }
+
+        return $this->blogUrl;
+    }
 }

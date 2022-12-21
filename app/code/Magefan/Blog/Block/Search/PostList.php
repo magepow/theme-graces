@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -15,13 +15,13 @@ use Magento\Store\Model\ScopeInterface;
  */
 class PostList extends \Magefan\Blog\Block\Post\PostList
 {
-	/**
-	 * Retrieve query
-	 * @return string
-	 */
+    /**
+     * Retrieve query
+     * @return string
+     */
     public function getQuery()
     {
-        return urldecode($this->getRequest()->getParam('q'));
+        return (string)urldecode($this->getRequest()->getParam('q'));
     }
 
     /**
@@ -32,16 +32,23 @@ class PostList extends \Magefan\Blog\Block\Post\PostList
     protected function _preparePostCollection()
     {
         parent::_preparePostCollection();
-
-        $q = $this->getQuery();
-        $this->_postCollection->addFieldToFilter(
-            array('title', 'content_heading', 'content'),
-            array(
-                array('like' => '%'.$q.'%'),
-                array('like' => '%'.$q.'%'),
-                array('like' => '% '.$q.' %')
-            )
+        $this->_postCollection->addSearchFilter(
+            $this->getQuery()
         );
+        $this->_postCollection->setOrder(
+            self::POSTS_SORT_FIELD_BY_PUBLISH_TIME,
+            \Magento\Framework\Api\SortOrder::SORT_DESC
+        );
+    }
+
+    /**
+     * Retrieve collection order field
+     *
+     * @return string
+     */
+    public function getCollectionOrderField()
+    {
+        return 'search_rate';
     }
 
     /**
@@ -52,42 +59,29 @@ class PostList extends \Magefan\Blog\Block\Post\PostList
     protected function _prepareLayout()
     {
         $title = $this->_getTitle();
-        $this->_addBreadcrumbs($title);
+        $this->_addBreadcrumbs($title, 'blog_search');
         $this->pageConfig->getTitle()->set($title);
+        /*
+        $page = $this->_request->getParam(\Magefan\Blog\Block\Post\PostList\Toolbar::PAGE_PARM_NAME);
+        if ($page < 2) {
+        */
+            $robots = $this->config->getSearchRobots();
+            $this->pageConfig->setRobots($robots);
+        /*
+        }
+
+        if ($page > 1) {
+            $this->pageConfig->setRobots('NOINDEX,FOLLOW');
+        }
+        */
+        $pageMainTitle = $this->getLayout()->getBlock('page.main.title');
+        if ($pageMainTitle) {
+            $pageMainTitle->setPageTitle(
+                $this->escapeHtml($title)
+            );
+        }
 
         return parent::_prepareLayout();
-    }
-
-    /**
-     * Prepare breadcrumbs
-     *
-     * @param  string $title
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @return void
-     */
-    protected function _addBreadcrumbs($title)
-    {
-        if ($this->_scopeConfig->getValue('web/default/show_cms_breadcrumbs', ScopeInterface::SCOPE_STORE)
-            && ($breadcrumbsBlock = $this->getLayout()->getBlock('breadcrumbs'))
-        ) {
-            $breadcrumbsBlock->addCrumb(
-                'home',
-                [
-                    'label' => __('Home'),
-                    'title' => __('Go to Home Page'),
-                    'link' => $this->_storeManager->getStore()->getBaseUrl()
-                ]
-            );
-            $breadcrumbsBlock->addCrumb(
-                'blog',
-                [
-                    'label' => __('Blog'),
-                    'title' => __('Go to Blog Home Page'),
-                    'link' => $this->_url->getBaseUrl()
-                ]
-            );
-            $breadcrumbsBlock->addCrumb('blog_search', ['label' => $title, 'title' => $title]);
-        }
     }
 
     /**
@@ -98,5 +92,4 @@ class PostList extends \Magefan\Blog\Block\Post\PostList
     {
         return __('Search "%1"', $this->getQuery());
     }
-
 }

@@ -61,7 +61,8 @@ class Product extends \Magento\Framework\View\Element\Template implements \Magen
     public function getCacheKeyInfo()
     {
         $keyInfo     =  parent::getCacheKeyInfo();
-        $keyInfo[]   =  $this->getMagicproduct()->getId();
+        $currencyCode = $this->_storeManager->getStore()->getCurrentCurrency()->getCode();
+        if($this->getMagicproduct()) $keyInfo[] = $this->getMagicproduct()->getId() . '_' . $currencyCode;
         return $keyInfo;
     }
 
@@ -70,7 +71,8 @@ class Product extends \Magento\Framework\View\Element\Template implements \Magen
      */
     public function getIdentities()
     {
-        return [self::DEFAULT_CACHE_TAG, self::DEFAULT_CACHE_TAG . '_' . $this->getMagicproduct()->getId()];
+        $currencyCode = $this->_storeManager->getStore()->getCurrentCurrency()->getCode();
+        return [ self::DEFAULT_CACHE_TAG, self::DEFAULT_CACHE_TAG . '_' . $this->getMagicproduct()->getId() . '_' . $currencyCode ];
     }
 
     protected function _jnitWidget()
@@ -79,6 +81,7 @@ class Product extends \Magento\Framework\View\Element\Template implements \Magen
         $this->_magicproduct = $this->magicproductFactory->create()->getCollection( $identifier, 'identifier')
                                     ->addFieldToFilter('identifier', $identifier)
                                     ->addFieldToFilter('type_id', $this->_typeId)
+                                    ->setPageSize(1)
                                     ->getFirstItem();
         if (!$this->_magicproduct){
             echo '<div class="message-error error message">Identifier "'. $identifier . '" not exist.</div> ';          
@@ -95,8 +98,10 @@ class Product extends \Magento\Framework\View\Element\Template implements \Magen
             $total = count($breakpoints);
             $responsive = '[';
             foreach ($breakpoints as $size => $screen) {
-                $responsive .=  isset($data[$screen]) ? '{"breakpoint": '.$size.', "settings": {"slidesToShow": '. $data[$screen] .'}}' : '';
-                if($total-- > 1) $responsive .= ', ';
+                $total--;
+                if(!isset($data[$screen])) continue;
+                $responsive .= '{"breakpoint": '.$size.', "settings": {"slidesToShow": '. $data[$screen] .'}}';
+                if($total > 0) $responsive .= ', ';
             }
             $responsive .= ']';
             $data['responsive'] = $responsive;
@@ -165,9 +170,15 @@ class Product extends \Magento\Framework\View\Element\Template implements \Magen
         return $activated;
     }
 
-    public function getContent($template)
+    public function setTemplateProduct($template)
     {
-        $content = '';    
+        $this->setData('template_product', $template);
+    }
+
+    public function getContent($template='')
+    {
+        if($template) $this->setTemplateProduct($template);
+        $content = '';
         $tabs = ($this->getAjax()) ? $tabs = array($this->getTabActivated() => 'Activated') : $this->getTabs();
         foreach ($tabs as $type => $name) {
             $content .= $this->getLayout()->createBlock('Magiccart\Magicproduct\Block\Product\GridProduct') // , "magicproduct.product.$type"
@@ -181,11 +192,13 @@ class Product extends \Magento\Framework\View\Element\Template implements \Magen
 
     public function getAjaxCfg()
     {
-        if(!$this->getAjax()) return 0;
+        // if(!$this->getAjax()) return 0;
         $ajax = array();
         foreach ($this->_options as $option) {
             $ajax[$option] = $this->getData($option);
         }
+        $template = $this->getTemplateProduct();
+        if($template) $ajax['template'] = $template;
         if($this->getData('parameters')) $ajax['identifier'] =  $this->getIdentifier();
         return json_encode($ajax);
     }
@@ -286,7 +299,7 @@ class Product extends \Magento\Framework\View\Element\Template implements \Magen
     }
 
     public function getVideo($data){
-        $url = str_replace('vimeo.com', 'player.vimeo.com/video', $data['video_url']) .'?byline=0&amp;portrait=0&amp;api=1';
+        $url = str_replace('vimeo.com', 'player.vimeo.com/video', (string) $data['video_url']) .'?byline=0&amp;portrait=0&amp;api=1';
         $video = array(
             'url' => $url,
             'width' => '100%',

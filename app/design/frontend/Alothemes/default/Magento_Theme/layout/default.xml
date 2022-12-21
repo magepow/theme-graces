@@ -35,13 +35,6 @@
                         <argument name="css_class" xsi:type="string">links</argument>
                     </arguments>
                 </block>
-				<block class="Magento\Theme\Block\Html\Header\Logo" name="logo">
-                    <arguments>
-					    <!--<argument name="logo_file" xsi:type="string">images/logo.png</argument>-->
-                        <argument name="logo_img_width" xsi:type="number">178</argument>
-                        <argument name="logo_img_height" xsi:type="number">43</argument>
-                    </arguments>
-                </block>
                 <block class="Magento\Framework\View\Element\Template" name="top.search" as="topSearch" template="Magento_Search::form.mini.phtml"/>
             </block>
 		</referenceContainer>

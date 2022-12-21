@@ -1,7 +1,44 @@
-# magento2-testimonial
-Testimonial magento 2 extension helps you to show list of testimonials on your website. All your vistors will know what others think about your website.
+## Magento 2 testimonial
 
-## Step 1 : Download magento2-testimonial extension
+**Testimonial magento 2 extension** helps you to show list of testimonials on your website. All your vistors will know what others think about your website.
+
+  [![Image of magento admin config](https://github.com/magiccart/magento2-testimonial/blob/master/media/theme_config45.png)](https://magepow.com/magento-2-testimonial.html)
+
+### Description
+
+This plugin may sound like a website sales trick at first, but customer testimonials or reviews are one of the effective tools to increase your website's credibility.
+
+- Build customer trust: testimonials from others make customers trustworthy and demonstrate how satisfied they are with your service or product.
+
+- Show the strength of your team with completed projects: in the online world, customers are still hesitant to decide to use services/products/. Testimonials show customers the projects you've completed.
+
+- Show customers list: adding famous businesses in the market is the best way to introduce your website to users.
+
+### Features
+
+- Easy to install and configure
+
+- Add unlimited customer testimonials
+
+- Show list of reputable customers hàng
+
+- Customize title, slider
+
+- Design responsive to devices
+
+- Widgets support
+
+- Unlimited display position on the website
+
+See more demo, docs
+
+- [**Magento 2 Testimonial extension**](https://magepow.com/magento-2-testimonial.html)
+
+[![Latest Stable Version](https://poser.pugx.org/magiccart/testimonial/v/stable)](https://packagist.org/packages/magiccart/testimonial)
+[![Total Downloads](https://poser.pugx.org/magiccart/testimonial/downloads)](https://packagist.org/packages/magiccart/testimonial)
+[![Daily Downloads](https://poser.pugx.org/magiccart/testimonial/d/daily)](https://packagist.org/packages/magiccart/testimonial)
+
+## Step 1 : Download Magento 2 Testimonial extension
 
  ### Install via composer (recommend)
 Run the following commands in Magento 2 root folder:
@@ -11,6 +48,7 @@ php bin/magento setup:upgrade
 php bin/magento setup:static-content:deploy -f
 ```
  
+
 ## Step 2: User guide
 
   ### 1. General configuration
@@ -68,7 +106,7 @@ If this project help you reduce time to develop, you can give me a cup of coffee
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/paypalme/alopay)
 
       
-**Free Extensions List**
+**[Our Magento 2 Extensions](https://magepow.com/magento-2-extensions.html)**
 
 * [Magento 2 Recent Sales Notification](https://magepow.com/magento-2-recent-sales-notification.html)
 
@@ -76,9 +114,9 @@ If this project help you reduce time to develop, you can give me a cup of coffee
 
 * [Magento 2 Sticky Cart](https://magepow.com/magento-sticky-cart.html)
 
-**Premium Extensions List**
+* [Magento 2 Ajax Contact](https://magepow.com/magento-ajax-contact-form.html)
 
-* [Magento 2 Pages Speed Optimizer](https://magepow.com/magento2-speed-optimizer.html)
+* [Magento 2 Lazy Load](https://magepow.com/magento-lazy-load.html)
 
 * [Magento 2 Mutil Translate](https://magepow.com/magento-multi-translate.html)
 
@@ -86,41 +124,64 @@ If this project help you reduce time to develop, you can give me a cup of coffee
 
 * [Magento 2 Lookbook Pin Products](https://magepow.com/lookbook-pin-products.html)
 
-**Featured Magento Themes**
+* [Magento 2 Product Slider](https://magepow.com/magento-product-slider.html)
 
-* [Expert Multipurpose responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/expert-premium-responsive-magento-2-and-1-support-rtl-magento-2-/21667789)
+* [Magento 2 Product Banner](https://magepow.com/magento-banner-slider.html)
 
-* [Gecko Premium responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/gecko-responsive-magento-2-theme-rtl-supported/24677410)
+**[Our Magento 2 services](https://magepow.com/magento-services.html)**
 
-* [Milano Fashion responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/milano-fashion-responsive-magento-1-2-theme/12141971)
+* [PSD to Magento 2 Theme Conversion](https://magepow.com/psd-to-magento-theme-conversion.html)
 
-* [Electro responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/electro-responsive-magento-1-2-theme/17042067)
+* [Magento 2 Speed Optimization Service](https://magepow.com/magento-speed-optimization-service.html)
+
+* [Magento 2 Security Patch Installation](https://magepow.com/magento-security-patch-installation.html)
+
+* [Magento 2 Website Maintenance Service](https://magepow.com/website-maintenance-service.html)
+
+* [Magento 2 Professional Installation Service](https://magepow.com/professional-installation-service.html)
+
+* [Magento 2 Upgrade Service](https://magepow.com/magento-upgrade-service.html)
+
+* [Magento 2 Customization Service](https://magepow.com/customization-service.html)
+
+* [Hire Magento 2 Developer](https://magepow.com/hire-magento-developer.html)
+
+**[Our Magento 2 Themes](https://alothemes.com/)**
+
+* [Expert Multipurpose Responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/expert-premium-responsive-magento-2-and-1-support-rtl-magento-2-/21667789)
+
+* [Gecko Premium Responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/gecko-responsive-magento-2-theme-rtl-supported/24677410)
+
+* [Milano Fashion Responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/milano-fashion-responsive-magento-1-2-theme/12141971)
+
+* [Electro 2 Responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/electro2-premium-responsive-magento-2-rtl-supported/26875864)
+
+* [Electro Responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/electro-responsive-magento-1-2-theme/17042067)
 
 * [Pizzaro Food responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/pizzaro-food-responsive-magento-1-2-theme/19438157)
 
-* [Biolife Organic responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/biolife-organic-food-magento-2-theme-rtl-supported/25712510)
+* [Biolife organic responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/biolife-organic-food-magento-2-theme-rtl-supported/25712510)
 
 * [Market responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/market-responsive-magento-2-theme/22997928)
 
 * [Kuteshop responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/kuteshop-multipurpose-responsive-magento-1-2-theme/12985435)
 
-**Featured Magento Services**
+* [Bencher - Responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/bencher-responsive-magento-1-2-theme/15787772)
 
-* [PSD to Magento 2 Theme Conversion](https://magepow.com/psd-to-magento-theme-conversion.html)
+* [Supermarket Responsive Magento 2 Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/supermarket-responsive-magento-1-2-theme/18447995)
 
-* [Magento Speed Optimization Service](https://magepow.com/magento-speed-optimization-service.html)
+**[Our Shopify Themes](https://themeforest.net/user/alotheme)**
 
-* [Magento Security Patch Installation](https://magepow.com/magento-security-patch-installation.html)
+* [Dukamarket - Multipurpose Shopify Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/dukamarket-multipurpose-shopify-theme/36158349)
 
-* [Magento Website Maintenance Service](https://magepow.com/website-maintenance-service.html)
+* [Ohey - Multipurpose Shopify Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/ohey-multipurpose-shopify-theme/34624195)
 
-* [Magento Professional Installation Service](https://magepow.com/professional-installation-service.html)
+* [Flexon - Multipurpose Shopify Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/flexon-multipurpose-shopify-theme/33461048)
 
-* [Magento Upgrade Service](https://magepow.com/magento-upgrade-service.html)
+**[Our Shopify App](https://apps.shopify.com/partners/maggicart)**
 
-* [Customization Service](https://magepow.com/customization-service.html)
+* [Magepow Size Chart](https://apps.shopify.com/magepow-size-chart)
 
-* [Hire Magento Developer](https://magepow.com/hire-magento-developer.html)
+**[Our WordPress Theme](https://themeforest.net/user/alotheme/portfolio)**
 
-[![Latest Stable Version](https://poser.pugx.org/magiccart/testimonial/v/stable)](https://packagist.org/packages/magiccart/testimonial)
-[![Total Downloads](https://poser.pugx.org/magiccart/testimonial/downloads)](https://packagist.org/packages/magiccart/testimonial)
+* [SadesMarket - Multipurpose WordPress Theme](https://1.envato.market/c/1314680/275988/4415?u=https://themeforest.net/item/sadesmarket-multipurpose-wordpress-theme/35369933)

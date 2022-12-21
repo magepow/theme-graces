@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -17,6 +17,11 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $_storeManager;
+
+    /**
+     * @var int
+     */
+    protected $_storeId;
 
     /**
      * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
@@ -49,7 +54,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         parent::_construct();
-        $this->_init('Magefan\Blog\Model\Category', 'Magefan\Blog\Model\ResourceModel\Category');
+        $this->_init(\Magefan\Blog\Model\Category::class, \Magefan\Blog\Model\ResourceModel\Category::class);
         $this->_map['fields']['category_id'] = 'main_table.category_id';
         $this->_map['fields']['store'] = 'store_table.store_id';
     }
@@ -63,8 +68,17 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function addFieldToFilter($field, $condition = null)
     {
-        if ($field === 'store_id') {
-            return $this->addStoreFilter($condition, false);
+        if (is_array($field)) {
+            if (count($field) > 1) {
+                return parent::addFieldToFilter($field, $condition);
+            } elseif (count($field) === 1) {
+                $field = $field[0];
+                $condition = isset($condition[0]) ? $condition[0] : $condition;
+            }
+        }
+
+        if ($field === 'store_id' || $field === 'store_ids') {
+            return $this->addStoreFilter($condition);
         }
 
         return parent::addFieldToFilter($field, $condition);
@@ -78,13 +92,23 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function addStoreFilter($store, $withAdmin = true)
     {
+        if ($store === null) {
+            return $this;
+        }
+
         if (!$this->getFlag('store_filter_added')) {
             if ($store instanceof \Magento\Store\Model\Store) {
+                $this->_storeId = $store->getId();
                 $store = [$store->getId()];
             }
 
             if (!is_array($store)) {
+                $this->_storeId = $store;
                 $store = [$store];
+            }
+
+            if (in_array(\Magento\Store\Model\Store::DEFAULT_STORE_ID, $store)) {
+                return $this;
             }
 
             if ($withAdmin) {
@@ -92,6 +116,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             }
 
             $this->addFilter('store', ['in' => $store], 'public');
+            $this->setFlag('store_filter_added', 1);
         }
         return $this;
     }
@@ -132,7 +157,15 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             $connection = $this->getConnection();
             $select = $connection->select()->from(['cps' => $this->getTable('magefan_blog_category_store')])
                 ->where('cps.category_id IN (?)', $items);
-            $result = $connection->fetchPairs($select);
+
+            $result = [];
+            foreach ($connection->fetchAll($select) as $item) {
+                if (!isset($result[$item['category_id']])) {
+                    $result[$item['category_id']] = [];
+                }
+                $result[$item['category_id']][] = $item['store_id'];
+            }
+
             if ($result) {
                 foreach ($this as $item) {
                     $categoryId = $item->getData('category_id');
@@ -142,14 +175,17 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
                     if ($result[$categoryId] == 0) {
                         $stores = $this->_storeManager->getStores(false, true);
                         $storeId = current($stores)->getId();
-                        $storeCode = key($stores);
                     } else {
                         $storeId = $result[$item->getData('category_id')];
-                        $storeCode = $this->_storeManager->getStore($storeId)->getCode();
                     }
                     $item->setData('_first_store_id', $storeId);
-                    $item->setData('store_code', $storeCode);
-                    $item->setData('store_id', [$result[$categoryId]]);
+                    $item->setData('store_ids', $result[$categoryId]);
+                }
+            }
+
+            if ($this->_storeId) {
+                foreach ($this as $item) {
+                    $item->setStoreId($this->_storeId);
                 }
             }
         }
@@ -181,11 +217,11 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * Retrieve gruped category childs
      * @return array
      */
-    protected function _getGroupedChilds()
+    public function getGroupedChilds()
     {
         $childs = [];
         if (count($this)) {
-            foreach($this as $item) {
+            foreach ($this as $item) {
                 $childs[$item->getParentId()][] = $item;
             }
         }
@@ -199,7 +235,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     public function getTreeOrderedArray()
     {
         $tree = [];
-        if ($childs = $this->_getGroupedChilds()) {
+        if ($childs = $this->getGroupedChilds()) {
             $this->_toTree(0, $childs, $tree);
         }
         return $tree;
@@ -216,10 +252,9 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         }
 
         if (isset($childs[$itemId])) {
-            foreach($childs[$itemId] as $i) {
+            foreach ($childs[$itemId] as $i) {
                 $this->_toTree($i->getId(), $childs, $tree);
             }
         }
     }
-
 }

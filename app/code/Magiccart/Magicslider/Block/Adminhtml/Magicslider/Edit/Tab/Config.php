@@ -146,8 +146,8 @@ class Config extends \Magento\Backend\Block\Widget\Form\Generic implements \Mage
             'adaptive-height', 
             'select',
             [
-                'label' => __('Adapts Height'),
-                'title' => __('Adapts Height'),
+                'label' => __('Adaptive Height'),
+                'title' => __('Adaptive Height'),
                 'name' => 'adaptive-height',
                 'options' => $this->_trueFalse,
                 'value' => 'false',
@@ -188,7 +188,7 @@ class Config extends \Magento\Backend\Block\Widget\Form\Generic implements \Mage
                 'name'  => 'speed',
                 'required' => true,
                 'class' => 'validate-zero-or-greater',
-                'value' => 300,
+                'value' => 600,
             ]
         );
 
@@ -199,7 +199,7 @@ class Config extends \Magento\Backend\Block\Widget\Form\Generic implements \Mage
                 'name'  => 'autoplay-Speed',
                 'required' => true,
                 'class' => 'validate-zero-or-greater',
-                'value' => 3000,
+                'value' => 6000,
             ]
         );
 
@@ -211,6 +211,28 @@ class Config extends \Magento\Backend\Block\Widget\Form\Generic implements \Mage
                 'required' => true,
                 'class' => 'validate-zero-or-greater',
                 'value' => 15,
+            ]
+        );
+
+        $fieldset->addField('center-Mode', 'select',
+            [
+                'label' => __('Center Mode'),
+                'title' => __('Center Mode'),
+                'name'  => 'center-Mode',
+                'required' => true,
+                'options' => $this->_trueFalse,
+                'value' => 'false',
+            ]
+        );
+
+        $fieldset->addField('center-Padding', 'text',
+            [
+                'label' => __('Center Padding (Example 50px enter value: 50)'),
+                'title' => __('Center Padding'),
+                'name'  => 'center-Padding',
+                'required' => true,
+                'class' => 'validate-zero-or-greater',
+                'value' => 0,
             ]
         );
 

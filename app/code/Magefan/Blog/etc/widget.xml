@@ -1,361 +1,211 @@
-<?xml version="1.0"?>
-<!-- /**
- * Magiccart 
- * @category    Magiccart 
- * @copyright   Copyright (c) 2014 Magiccart (http://www.magiccart.net/) 
- * @license     http://www.magiccart.net/license-agreement.html
- * @Author: DOng NGuyen<nguyen@dvn.com>
- * @@Create Date: 2016-02-23 18:59:34
- * @@Modify Date: 2016-07-29 11:36:09
- * @@Function:
- */ -->
- 
-<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../Magento/Widget/etc/widget.xsd">
-	<widget id="magiccart_blog" class="Magefan\Blog\Block\Widget\Slide">
-		<label translate="true">Blog Slider Widget</label>
-		<description>Blog Slider Latest Posts</description>
-		<parameters>
-			<parameter name="title" xsi:type="text" visible="true" sort_order="0" >
-				<label translate="true">Title</label>
-				<value>Latest Posts Blog</value>
-			</parameter>
-			<parameter name="limit" required="true" xsi:type="text"  visible="true" sort_order="5">
-				<label translate="true">Limit Posts Display</label>
-				<value>12</value>
-			</parameter>
-			<parameter name="slide" xsi:type="select"  visible="true" sort_order="10">
-				<label translate="true">Slide</label>
-                <options>
-                    <option name="0" value="0">
-                        <label translate="true">No</label>
-                    </option>
-                    <option name="1" value="1" selected="true">
-                        <label translate="true">Yes</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="vertical" xsi:type="select"  visible="true" sort_order="15">
-				<label translate="true">Vertical</label>
-				<depends>
-					<parameter name="slide" value="1" />
-				</depends>
-                <options>
-                    <option name="false" value="false" selected="true">
-                        <label translate="true">False</label>
-                    </option>
-                    <option name="true" value="true">
-                        <label translate="true">True</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="infinite" xsi:type="select"  visible="true" sort_order="20">
-				<label translate="true">Infinite</label>
-				<depends>
-					<parameter name="slide" value="1" />
-				</depends>
-                <options>
-                    <option name="false" value="false">
-                        <label translate="true">False</label>
-                    </option>
-                    <option name="true" value="true" selected="true">
-                        <label translate="true">True</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="autoplay" xsi:type="select"  visible="true" sort_order="25">
-				<label translate="true">Auto Play</label>
-				<depends>
-					<parameter name="slide" value="1" />
-				</depends>
-                <options>
-                    <option name="false" value="false">
-                        <label translate="true">False</label>
-                    </option>
-                    <option name="true" value="true" selected="true">
-                        <label translate="true">True</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="arrows" xsi:type="select"  visible="true" sort_order="30">
-				<label translate="true">Arrows</label>
-				<depends>
-					<parameter name="slide" value="1" />
-				</depends>
-                <options>
-                    <option name="false" value="false">
-                        <label translate="true">False</label>
-                    </option>
-                    <option name="true" value="true" selected="true">
-                        <label translate="true">True</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="dots" xsi:type="select"  visible="true" sort_order="35">
-				<label translate="true">Dots</label>
-				<depends>
-					<parameter name="slide" value="1" />
-				</depends>
-                <options>
-                    <option name="false" value="false" selected="true">
-                        <label translate="true">False</label>
-                    </option>
-                    <option name="true" value="true">
-                        <label translate="true">True</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="speed" required="true" xsi:type="text"  visible="true" sort_order="45">
-				<label translate="true">Speed</label>
-				<depends>
-					<parameter name="slide" value="1" />
-				</depends>
-				<value>300</value>
-			</parameter>
-			<parameter name="autoplay-Speed" required="true" xsi:type="text"  visible="true" sort_order="50">
-				<label translate="true">Autoplay Speed</label>
-				<depends>
-					<parameter name="slide" value="1" />
-				</depends>
-				<value>3000</value>
-			</parameter>
-			<parameter name="padding" required="true" xsi:type="text"  visible="true" sort_order="55">
-				<label translate="true">Padding</label>
-				<value>15</value>
-			</parameter>
-            <parameter name="template" xsi:type="select" required="true" visible="true" sort_order="60">
-                <label translate="true">Template</label>
-                <options>
-                    <option name="default" value="slide.phtml" selected="true">
-                        <label translate="true">Default</label>
-                    </option>
-                </options>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/**
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
+ *
+ * Glory to Ukraine! Glory to the heroes!
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget id="magefan_blog_recent" class="Magefan\Blog\Block\Widget\Recent">
+        <label translate="true">Magefan Blog Extension - Recent Blog Posts</label>
+        <description>Display recent blog posts</description>
+        <parameters>
+            <parameter name="title" xsi:type="text"  visible="true" sort_order="10" >
+                <label translate="true">Title</label>
+                <description translate="true">Please specify title you want to display on the frontend. You can leave it blank if necessary.</description>
             </parameter>
-			<parameter name="rows" xsi:type="select"  visible="true" sort_order="65">
-				<label translate="true">Rows</label>
-				<depends>
-					<parameter name="slide" value="1" />
-				</depends>
-                <options>
-                    <option name="1" value="1" selected="true">
-                        <label translate="true">1 row(s) /slider</label>
-                    </option>
-                    <option name="2" value="2">
-                        <label translate="true">2 row(s) /slider</label>
-                    </option>
-                     <option name="3" value="3">
-                        <label translate="true">3 row(s) /slider</label>
-                    </option>
-                    <option name="4" value="4">
-                        <label translate="true">4 row(s) /slider</label>
-                    </option>
-                    <option name="5" value="5">
-                        <label translate="true">5 row(s) /slider</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="mobile" xsi:type="select"  visible="true" sort_order="70">
-				<label translate="true"><![CDATA[max-width 360: ]]></label>
-                <options>
-                    <option name="1" value="1" selected="true">
-                        <label translate="true">1 item(s) /row</label>
-                    </option>
-                    <option name="2" value="2">
-                        <label translate="true">2 item(s) /row</label>
-                    </option>
-                     <option name="3" value="3">
-                        <label translate="true">3 item(s) /row</label>
-                    </option>
-                    <option name="4" value="4">
-                        <label translate="true">4 item(s) /row</label>
-                    </option>
-                    <option name="5" value="5">
-                        <label translate="true">5 item(s) /row</label>
-                    </option>
-                    <option name="6" value="6">
-                        <label translate="true">6 item(s) /row</label>
-                    </option>
-                    <option name="7" value="7">
-                        <label translate="true">7 item(s) /row</label>
-                    </option>
-                    <option name="8" value="8">
-                        <label translate="true">8 item(s) /row</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="portrait" xsi:type="select"  visible="true" sort_order="75">
-				<label translate="true"><![CDATA[max-width 480: ]]></label>
-                <options>
-                    <option name="1" value="1" selected="true">
-                        <label translate="true">1 item(s) /row</label>
-                    </option>
-                    <option name="2" value="2">
-                        <label translate="true">2 item(s) /row</label>
-                    </option>
-                     <option name="3" value="3">
-                        <label translate="true">3 item(s) /row</label>
-                    </option>
-                    <option name="4" value="4">
-                        <label translate="true">4 item(s) /row</label>
-                    </option>
-                    <option name="5" value="5">
-                        <label translate="true">5 item(s) /row</label>
-                    </option>
-                    <option name="6" value="6">
-                        <label translate="true">6 item(s) /row</label>
-                    </option>
-                    <option name="7" value="7">
-                        <label translate="true">7 item(s) /row</label>
-                    </option>
-                    <option name="8" value="8">
-                        <label translate="true">8 item(s) /row</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="landscape" xsi:type="select"  visible="true" sort_order="80">
-				<label translate="true"><![CDATA[max-width 640: ]]></label>
-                <options>
-                    <option name="1" value="1">
-                        <label translate="true">1 item(s) /row</label>
-                    </option>
-                    <option name="2" value="2" selected="true">
-                        <label translate="true">2 item(s) /row</label>
-                    </option>
-                     <option name="3" value="3">
-                        <label translate="true">3 item(s) /row</label>
-                    </option>
-                    <option name="4" value="4">
-                        <label translate="true">4 item(s) /row</label>
-                    </option>
-                    <option name="5" value="5">
-                        <label translate="true">5 item(s) /row</label>
-                    </option>
-                    <option name="6" value="6">
-                        <label translate="true">6 item(s) /row</label>
-                    </option>
-                    <option name="7" value="7">
-                        <label translate="true">7 item(s) /row</label>
-                    </option>
-                    <option name="8" value="8">
-                        <label translate="true">8 item(s) /row</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="tablet" xsi:type="select"  visible="true" sort_order="85">
-				<label translate="true"><![CDATA[max-width 768: ]]></label>
-                <options>
-                    <option name="1" value="1">
-                        <label translate="true">1 item(s) /row</label>
-                    </option>
-                    <option name="2" value="2">
-                        <label translate="true">2 item(s) /row</label>
-                    </option>
-                     <option name="3" value="3" selected="true">
-                        <label translate="true">3 item(s) /row</label>
-                    </option>
-                    <option name="4" value="4">
-                        <label translate="true">4 item(s) /row</label>
-                    </option>
-                    <option name="5" value="5">
-                        <label translate="true">5 item(s) /row</label>
-                    </option>
-                    <option name="6" value="6">
-                        <label translate="true">6 item(s) /row</label>
-                    </option>
-                    <option name="7" value="7">
-                        <label translate="true">7 item(s) /row</label>
-                    </option>
-                    <option name="8" value="8">
-                        <label translate="true">8 item(s) /row</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="notebook" xsi:type="select"  visible="true" sort_order="90">
-				<label translate="true"><![CDATA[max-width 991: ]]></label>
-                <options>
-                    <option name="1" value="1">
-                        <label translate="true">1 item(s) /row</label>
-                    </option>
-                    <option name="2" value="2">
-                        <label translate="true">2 item(s) /row</label>
-                    </option>
-                     <option name="3" value="3" selected="true">
-                        <label translate="true">3 item(s) /row</label>
-                    </option>
-                    <option name="4" value="4">
-                        <label translate="true">4 item(s) /row</label>
-                    </option>
-                    <option name="5" value="5">
-                        <label translate="true">5 item(s) /row</label>
-                    </option>
-                    <option name="6" value="6">
-                        <label translate="true">6 item(s) /row</label>
-                    </option>
-                    <option name="7" value="7">
-                        <label translate="true">7 item(s) /row</label>
-                    </option>
-                    <option name="8" value="8">
-                        <label translate="true">8 item(s) /row</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="desktop" xsi:type="select"  visible="true" sort_order="95">
-				<label translate="true"><![CDATA[max-width 1199: ]]></label>
-                <options>
-                    <option name="1" value="1">
-                        <label translate="true">1 item(s) /row</label>
-                    </option>
-                    <option name="2" value="2">
-                        <label translate="true">2 item(s) /row</label>
-                    </option>
-                     <option name="3" value="3">
-                        <label translate="true">3 item(s) /row</label>
-                    </option>
-                    <option name="4" value="4" selected="true">
-                        <label translate="true">4 item(s) /row</label>
-                    </option>
-                    <option name="5" value="5">
-                        <label translate="true">5 item(s) /row</label>
-                    </option>
-                    <option name="6" value="6">
-                        <label translate="true">6 item(s) /row</label>
-                    </option>
-                    <option name="7" value="7">
-                        <label translate="true">7 item(s) /row</label>
-                    </option>
-                    <option name="8" value="8">
-                        <label translate="true">8 item(s) /row</label>
-                    </option>
-                </options>
-			</parameter>
-			<parameter name="visible" xsi:type="select"  visible="true" sort_order="100">
-				<label translate="true"><![CDATA[min-width 1200: ]]></label>
-                <options>
-                    <option name="1" value="1">
-                        <label translate="true">1 item(s) /row</label>
-                    </option>
-                    <option name="2" value="2">
-                        <label translate="true">2 item(s) /row</label>
-                    </option>
-                     <option name="3" value="3">
-                        <label translate="true">3 item(s) /row</label>
-                    </option>
-                    <option name="4" value="4" selected="true">
-                        <label translate="true">4 item(s) /row</label>
-                    </option>
-                    <option name="5" value="5">
-                        <label translate="true">5 item(s) /row</label>
-                    </option>
-                    <option name="6" value="6">
-                        <label translate="true">6 item(s) /row</label>
-                    </option>
-                    <option name="7" value="7">
-                        <label translate="true">7 item(s) /row</label>
-                    </option>
-                    <option name="8" value="8">
-                        <label translate="true">8 item(s) /row</label>
-                    </option>
-                </options>
-			</parameter>
-		</parameters>
-	</widget>
+            <parameter name="no_repeat_posts_enable" xsi:type="select"  source_model="Magento\Config\Model\Config\Source\Yesno" visible="true" sort_order="15" >
+                <label translate="true">Don't repeat posts</label>
+                <description translate="true">Set it to YES if you display multiple recent post widgets on the same page and don't want them do display the same posts.</description>
+            </parameter>
+            <parameter name="number_of_posts" xsi:type="text"  visible="true" sort_order="20" >
+                <label translate="true">Number of Posts</label>
+                <description translate="true">Please indicate number of recent posts you want to display. Leave blank to use predefined "Posts Per Page" value.</description>
+            </parameter>
+            <parameter name="category_id" xsi:type="select" source_model="Magefan\Blog\Model\Config\Source\Category" visible="true" sort_order="30" >
+                <label translate="true">Posts Category</label>
+                <description translate="true">Leave blank to display posts from all categories.</description>
+            </parameter>
+            <parameter name="tag_id" xsi:type="select" source_model="Magefan\Blog\Model\Config\Source\WidgetTag" visible="true" sort_order="40" >
+                <label translate="true">Posts Tag</label>
+                <description translate="true">Leave blank to display posts from all tags.</description>
+            </parameter>
+            <parameter name="author_id" xsi:type="select" source_model="Magefan\Blog\Model\Config\Source\Author" visible="true" sort_order="50" >
+                <label translate="true">Posts Author</label>
+                <description translate="true">Leave blank to display posts from all authors.</description>
+            </parameter>
+            <parameter name="posts_sort_by" xsi:type="select" source_model="Magefan\Blog\Model\Config\Source\PostsSortBy" visible="true" sort_order="55" >
+                <label translate="true">Posts Sort By</label>
+            </parameter>
+            <parameter name="from" xsi:type="text" visible="true" sort_order="60" >
+                <label translate="true">Posts Publish Date From</label>
+                <description translate="true">Leave blank or use date format YYYY-MM-DD.</description>
+            </parameter>
+            <parameter name="to" xsi:type="text"  visible="true" sort_order="70" >
+                <label translate="true">Posts Publish Date To</label>
+                <description translate="true">Leave blank or use date format YYYY-MM-DD.</description>
+            </parameter>
+            <parameter name="custom_template" xsi:type="text" visible="true" sort_order="80" >
+                <label translate="true">Custom Template</label>
+                <description translate="true"><![CDATA[
+                    Leave blank to use default template <em>Magefan_Blog::widget/recent.phtml</em>.<br/>
+                    <em>Magefan_Blog::widget/recent_masonry.phtml</em> template is also available out of the box.
+                    <br/>
+                    If you use Blog Extra, you can also apply these ones: <br/>
+                    <pre>
+                    Magefan_BlogExtra::post/list/block-0-1-full.phtml
+                    Magefan_BlogExtra::post/list/block-0-2-full.phtml
+                    Magefan_BlogExtra::post/list/block-0-4-row-full.phtml
+                    Magefan_BlogExtra::post/list/block-0-5-full.phtml
+                    Magefan_BlogExtra::post/list/block-0-6-full.phtml
+                    Magefan_BlogExtra::post/list/block-1-2-full.phtml
+                    Magefan_BlogExtra::post/list/block-1-3-full.phtml
+                    Magefan_BlogExtra::post/list/block-2-1-full.phtml
+                    Magefan_BlogExtra::post/list/block-2-2-full.phtml
+                    Magefan_BlogExtra::post/list/block-2-3.phtml
+                    Magefan_BlogExtra::post/list/block-3-1-full.phtml
+                    Magefan_BlogExtra::post/list/block-3-2.phtml
+                    Magefan_BlogExtra::post/list/block-3-3.phtml
+                    Magefan_BlogExtra::post/list/block-3-4.phtml
+                    Magefan_BlogExtra::post/list/block-3-5-full.phtml
+                    Magefan_BlogExtra::post/list/block-3-6.phtml
+                    Magefan_BlogExtra::post/list/block-4-1.phtml
+                    Magefan_BlogExtra::post/list/block-4-2-full.phtml
+                    Magefan_BlogExtra::post/list/block-5-1-full.phtml
+                    Magefan_BlogExtra::post/list/block-5-2.phtml
+                    Magefan_BlogExtra::post/list/block-5-3.phtml
+                    <pre>
+                ]]></description>
+            </parameter>
+        </parameters>
+    </widget>
+    <widget id="magefan_blog_featured" class="Magefan\Blog\Block\Widget\Featured">
+        <label translate="true">Magefan Blog Extension - Featured Blog Posts</label>
+        <description>Display featured blog posts</description>
+        <parameters>
+            <parameter name="title" xsi:type="text"  visible="true" sort_order="10" >
+                <label translate="true">Title</label>
+                <description translate="true">Please specify title you want to display on the frontend. You can leave it blank if necessary.</description>
+            </parameter>
+            <parameter name="posts_ids" xsi:type="block"  visible="true" sort_order="20" >
+                <label translate="true">Post IDs</label>
+                <block class="Magefan\Blog\Block\Adminhtml\Widget\Featured\Grid">
+                    <data>
+                        <item name="button" xsi:type="array">
+                            <item name="open" xsi:type="string" translate="true">Select Post IDs...</item>
+                        </item>
+                    </data>
+                </block>
+            </parameter>
+            <parameter name="custom_template" xsi:type="text" visible="true" sort_order="40" >
+                <label translate="true">Custom Template</label>
+                <description translate="true"><![CDATA[
+                    Leave blank to use default template <em>Magefan_Blog::widget/recent.phtml</em>.<br/>
+                    <em>Magefan_Blog::widget/recent_masonry.phtml</em> template is also available out of the box.
+                    <br/>
+                    If you use Blog Extra, you can also apply these ones: <br/>
+                    <pre>
+                    Magefan_BlogExtra::post/list/block-0-1-full.phtml
+                    Magefan_BlogExtra::post/list/block-0-2-full.phtml
+                    Magefan_BlogExtra::post/list/block-0-4-row-full.phtml
+                    Magefan_BlogExtra::post/list/block-0-5-full.phtml
+                    Magefan_BlogExtra::post/list/block-0-6-full.phtml
+                    Magefan_BlogExtra::post/list/block-1-2-full.phtml
+                    Magefan_BlogExtra::post/list/block-1-3-full.phtml
+                    Magefan_BlogExtra::post/list/block-2-1-full.phtml
+                    Magefan_BlogExtra::post/list/block-2-2-full.phtml
+                    Magefan_BlogExtra::post/list/block-2-3.phtml
+                    Magefan_BlogExtra::post/list/block-3-1-full.phtml
+                    Magefan_BlogExtra::post/list/block-3-2.phtml
+                    Magefan_BlogExtra::post/list/block-3-3.phtml
+                    Magefan_BlogExtra::post/list/block-3-4.phtml
+                    Magefan_BlogExtra::post/list/block-3-5-full.phtml
+                    Magefan_BlogExtra::post/list/block-3-6.phtml
+                    Magefan_BlogExtra::post/list/block-4-1.phtml
+                    Magefan_BlogExtra::post/list/block-4-2-full.phtml
+                    Magefan_BlogExtra::post/list/block-5-1-full.phtml
+                    Magefan_BlogExtra::post/list/block-5-2.phtml
+                    Magefan_BlogExtra::post/list/block-5-3.phtml
+                    <pre>
+                ]]></description>
+            </parameter>
+        </parameters>
+    </widget>
+
+    <widget id="blog_post_link"
+            class="Magefan\Blog\Block\Widget\PostLink">
+        <label translate="true">Magefan Blog Extension - Blog Post Link</label>
+        <description translate="true">Link to a Specified Blog Post Page</description>
+        <parameters>
+            <parameter name="anchor_text" xsi:type="text" visible="true">
+                <label translate="true">Anchor Custom Text</label>
+                <description translate="true">If empty, we'll use the object name here.</description>
+            </parameter>
+            <parameter name="title" xsi:type="text" visible="true">
+                <label translate="true">Anchor Custom Title</label>
+            </parameter>
+            <parameter name="entity_id" xsi:type="text" visible="true">
+                <label translate="true">Post ID</label>
+            </parameter>
+        </parameters>
+    </widget>
+
+    <widget id="blog_category_link"
+            class="Magefan\Blog\Block\Widget\CategoryLink">
+        <label translate="true">Magefan Blog Extension - Blog Category Link</label>
+        <description translate="true">Link to a Specified Blog Category Page</description>
+        <parameters>
+            <parameter name="anchor_text" xsi:type="text" visible="true">
+                <label translate="true">Anchor Custom Text</label>
+                <description translate="true">If empty, we'll use the object name here.</description>
+            </parameter>
+            <parameter name="title" xsi:type="text" visible="true">
+                <label translate="true">Anchor Custom Title</label>
+            </parameter>
+            <parameter name="entity_id" xsi:type="text" visible="true">
+                <label translate="true">Category ID</label>
+            </parameter>
+        </parameters>
+    </widget>
+
+    <widget id="blog_tag_link"
+            class="Magefan\Blog\Block\Widget\TagLink">
+        <label translate="true">Magefan Blog Extension - Blog Tag Link</label>
+        <description translate="true">Link to a Specified Blog Tag Page</description>
+        <parameters>
+            <parameter name="anchor_text" xsi:type="text" visible="true">
+                <label translate="true">Anchor Custom Text</label>
+                <description translate="true">If empty, we'll use the object name here.</description>
+            </parameter>
+            <parameter name="title" xsi:type="text" visible="true">
+                <label translate="true">Anchor Custom Title</label>
+            </parameter>
+            <parameter name="entity_id" xsi:type="text" visible="true">
+                <label translate="true">Tag ID</label>
+            </parameter>
+        </parameters>
+    </widget>
+
+    <widget id="blog_author_link"
+            class="Magefan\Blog\Block\Widget\AuthorLink">
+        <label translate="true">Magefan Blog Extension - Blog Author Link</label>
+        <description translate="true">Link to a Specified Blog Author Page</description>
+        <parameters>
+            <parameter name="anchor_text" xsi:type="text" visible="true">
+                <label translate="true">Anchor Custom Text</label>
+                <description translate="true">If empty, we'll use the object name here.</description>
+            </parameter>
+            <parameter name="title" xsi:type="text" visible="true">
+                <label translate="true">Anchor Custom Title</label>
+            </parameter>
+            <parameter name="entity_id" xsi:type="text" visible="true">
+                <label translate="true">Author ID</label>
+                <description translate="true"><![CDATA[
+                    Enter user ID.
+                ]]></description>
+            </parameter>
+        </parameters>
+    </widget>
 </widgets>

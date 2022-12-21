@@ -4,8 +4,8 @@
         <css src="Magiccart_Alothemes::css/alothemes.css"/>
     </head>
     <body>
-        <referenceContainer name="content">
-            <block class="Magento\Framework\View\Element\Template" name="alothemes_config" template="Magiccart_Alothemes::config.phtml"/>
-        </referenceContainer>
+        <referenceBlock name="head.additional">
+            <block class="Magento\Backend\Block\Template" name="alothemes_config" template="Magiccart_Alothemes::config.phtml"/>
+        </referenceBlock>
     </body>
 </page>

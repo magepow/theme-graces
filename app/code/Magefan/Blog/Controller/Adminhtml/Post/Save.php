@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -9,11 +9,17 @@
 namespace Magefan\Blog\Controller\Adminhtml\Post;
 
 use Magefan\Blog\Model\Post;
+
 /**
  * Blog post save controller
  */
 class Save extends \Magefan\Blog\Controller\Adminhtml\Post
 {
+    /**
+     * @var string
+     */
+    protected $_allowedKey = 'Magefan_Blog::post_save';
+
     /**
      * Before model save
      * @param  \Magefan\Blog\Model\Post $model
@@ -22,64 +28,162 @@ class Save extends \Magefan\Blog\Controller\Adminhtml\Post
      */
     protected function _beforeSave($model, $request)
     {
-        /* prepare publish date */
-        $dateFilter = $this->_objectManager->create('Magento\Framework\Stdlib\DateTime\Filter\Date');
+        /* Prepare author */
+        if (!$model->getAuthorId()) {
+            $authSession = $this->_objectManager->get(\Magento\Backend\Model\Auth\Session::class);
+            $model->setAuthorId($authSession->getUser()->getId());
+        }
+
+        /* Prepare relative links */
+        $data = $request->getPost('data');
+        $links = isset($data['links']) ? $data['links'] : ['post' => [], 'product' => []];
+        if (is_array($links)) {
+            foreach (['post', 'product'] as $linkType) {
+                if (isset($links[$linkType]) && is_array($links[$linkType])) {
+                    $linksData = [];
+                    foreach ($links[$linkType] as $item) {
+                        $linksData[$item['id']] = [
+                            'position' => isset($item['position']) ? $item['position'] : 0
+                        ];
+                    }
+                    $links[$linkType] = $linksData;
+                } else {
+                    $links[$linkType] = [];
+                }
+            }
+            $model->setData('links', $links);
+        }
+
+        /* Prepare images */
+        $data = $model->getData();
+        foreach (['featured_img', 'featured_list_img', 'og_img'] as $key) {
+            if (isset($data[$key]) && is_array($data[$key])) {
+                if (!empty($data[$key]['delete'])) {
+                    $model->setData($key, null);
+                } else {
+                    if (isset($data[$key][0]['name']) && isset($data[$key][0]['tmp_name'])) {
+                        $image = $data[$key][0]['name'];
+
+                        $imageUploader = $this->_objectManager->get(
+                            \Magefan\Blog\ImageUpload::class
+                        );
+                        $image = $imageUploader->moveFileFromTmp($image, true);
+
+                        $model->setData($key, $image);
+                    } else {
+                        if (isset($data[$key][0]['name'])) {
+                            $model->setData($key, $data[$key][0]['name']);
+                        }
+                    }
+                }
+            } else {
+                $model->setData($key, null);
+            }
+        }
+
+        /* Prepare Media Gallery */
         $data = $model->getData();
 
-        $inputFilter = new \Zend_Filter_Input(
-            ['publish_time' => $dateFilter],
-            [],
-            $data
-        );
-        $data = $inputFilter->getUnescaped();
-        $model->setData($data);
+        if (!empty($data['media_gallery']['images'])) {
+            $images = $data['media_gallery']['images'];
+            usort($images, function ($imageA, $imageB) {
+                if (!isset($imageA['position'])) {
+                    $imageA['position'] = 0;
+                }
+                if (!isset($imageB['position'])) {
+                    $imageB['position'] = 0;
+                }
+                return ($imageA['position'] < $imageB['position']) ? -1 : 1;
+            });
+            $gallery = [];
+            foreach ($images as $image) {
+                if (empty($image['removed'])) {
+                    if (!empty($image['value_id'])) {
+                        $gallery[] = $image['value_id'];
+                    } elseif (!empty($image['file'])) {
+                        $imageUploader = $this->_objectManager->get(
+                            \Magefan\Blog\ImageUpload::class
+                        );
+                        $image['file'] = $imageUploader->moveFileFromTmp($image['file'], true);
+                        $gallery[] = $image['file'];
+                    }
+                }
+            }
 
-        /* prepare relative links */
-        if ($links = $request->getPost('links')) {
+            $model->setGalleryImages($gallery);
+        }
 
-            $jsHelper = $this->_objectManager->create('Magento\Backend\Helper\Js');
+        /* Prepare Tags */
+        $tagInput = trim((string)$request->getPost('tag_input'));
+        if ($tagInput) {
+            $tagInput = explode(',', $tagInput);
 
-            $links = is_array($links) ? $links : [];
-            $linkTypes = ['relatedposts', 'relatedproducts'];
-            foreach ($linkTypes as $type) {
+            $tagsCollection = $this->_objectManager->create(\Magefan\Blog\Model\ResourceModel\Tag\Collection::class);
+            $allTags = [];
+            foreach ($tagsCollection as $item) {
+                if (!$item->getTitle()) {
+                    continue;
+                }
+                $allTags[((string)$item->getTitle())] = $item->getId();
+            }
 
-                if (isset($links[$type])) {
-                    $links[$type] = $jsHelper->decodeGridSerializedInput($links[$type]);
+            $tags = [];
+            foreach ($tagInput as $tagTitle) {
+                $tagTitle = trim((string)$tagTitle);
+                if (!$tagTitle) {
+                    continue;
+                }
+                if (empty($allTags[$tagTitle])) {
+                    $tagModel = $this->_objectManager->create(\Magefan\Blog\Model\Tag::class);
+                    $tagModel->setData('title', $tagTitle);
+                    $tagModel->setData('is_active', 1);
+                    $tagModel->save();
 
-                    $model->setData($type.'_links', $links[$type]);
+                    $tags[] = $tagModel->getId();
+                } else {
+                    $tags[] = $allTags[$tagTitle];
+                }
+            }
+            $model->setData('tags', $tags);
+        } else {
+            $model->setData('tags', []);
+        }
+    }
+
+    /**
+     * Filter request params
+     * @param  array $data
+     * @return array
+     */
+    protected function filterParams($data)
+    {
+        /* Prepare dates */
+        $dateTimeFilter = $this->_objectManager->create(\Magento\Framework\Stdlib\DateTime\Filter\DateTime::class);
+        $dateFilter = $this->_objectManager->create(\Magento\Framework\Stdlib\DateTime\Filter\Date::class);
+
+        $filterRules = [];
+        foreach (['publish_time', 'end_time', 'custom_theme_from', 'custom_theme_to'] as $dateField) {
+            if (!empty($data[$dateField])) {
+                $filterRules[$dateField] = $dateFilter;
+                $data[$dateField] = preg_replace('/(.*)(\+\d\d\d\d\d\d)(\d\d)/U', '$1$3', $data[$dateField]);
+
+                if (!preg_match('/\d{1}:\d{2}/', $data[$dateField])) {
+                    /*$data[$dateField] .= " 00:00";*/
+                    $filterRules[$dateField] = $dateFilter;
+                } else {
+                    $filterRules[$dateField] = $dateTimeFilter;
                 }
             }
         }
 
-        /* prepare featured image */
-        $imageField = 'featured_img';
-        $fileSystem = $this->_objectManager->create('Magento\Framework\Filesystem');
-        $mediaDirectory = $fileSystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
+        $inputFilter = new \Zend_Filter_Input(
+            $filterRules,
+            [],
+            $data
+        );
 
-        if (isset($data[$imageField]) && isset($data[$imageField]['value'])) {
-            if (isset($data[$imageField]['delete'])) {
-                unlink($mediaDirectory->getAbsolutePath() . $data[$imageField]['value']);
-                $model->setData($imageField, '');
-            } else {
-                $model->unsetData($imageField);
-            }
-        }
-        try {
-            $uploader = $this->_objectManager->create('Magento\MediaStorage\Model\File\UploaderFactory');
-            $uploader = $uploader->create(['fileId' => 'post['.$imageField.']']);
-            $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png']);
-            $uploader->setAllowRenameFiles(true);
-            $uploader->setFilesDispersion(true);
-            $uploader->setAllowCreateFolders(true);
-            $result = $uploader->save(
-                $mediaDirectory->getAbsolutePath(Post::BASE_MEDIA_PATH)
-            );
-            $model->setData($imageField, Post::BASE_MEDIA_PATH . $result['file']);
-        } catch (\Exception $e) {
-            if ($e->getCode() != \Magento\Framework\File\Uploader::TMP_NAME_EMPTY) {
-                throw new FrameworkException($e->getMessage());
-            }
-        }
+        $data = $inputFilter->getUnescaped();
+
+        return $data;
     }
-
 }

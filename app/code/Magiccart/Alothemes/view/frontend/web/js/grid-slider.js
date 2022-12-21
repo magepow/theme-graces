@@ -2,18 +2,20 @@
 * @Author: Alex Dong
 * @Date:   2020-07-29 13:21:07
 * @Last Modified by:   Alex Dong
-* @Last Modified time: 2021-02-21 00:18:41
+* @Last Modified time: 2022-07-18 18:26:17
 */
 
 define([
     'jquery',
     'slick',
-    'jquery-ui-modules/widget'
+    'jquery-ui-modules/core'
     ], function ($, slick) {
 		"use strict";
         $.widget('magiccart.gridSlider', {
             options: {
                 selector: '.grid-slider',
+                useIntersectionObserver: true,
+                unobserve: true
             },
 
             _create: function () {
@@ -21,23 +23,24 @@ define([
             	this._initSlider();
             },
 
-			_uniqid: function (a = "", b = false) {
-			    const c = Date.now()/1000;
-			    let d = c.toString(16).split(".").join("");
-			    while(d.length < 14) d += "0";
-			    let e = "";
-			    if(b){
-			        e = ".";
-			        e += Math.round(Math.random()*100000000);
-			    }
-			    return a + d + e;
+			_uniqid: function (length=10) {
+	            let result       	   = '';
+	            const characters 	   = 'abcdefghijklmnopqrstuvwxyz0123456789';
+	            const charactersLength = characters.length;
+	            for ( let i = 0; i < length; i++ ) {
+	            	result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	           	}
+	           return result;
 			},
 
             _initSlider: function () {
                 var options = this.options;
+                var useIntersectionObserver = options.useIntersectionObserver;
+                var unobserve = options.unobserve;
                 var self = this;
                 var $head = $('head');
-                self.element.find(options.selector).each(function() {
+                var elements = options.selector ? self.element.find(options.selector) : self.element;
+                elements.each(function() {
                     var element = $(this);
                     var selector = 'grid-slider-' + self._uniqid();
                     var styleId  = selector;
@@ -50,25 +53,29 @@ define([
 		            var options = element.data();
 		            if(iClass === undefined){
 		                element.children().addClass('alo-item');
-		                var iClass = '.alo-item';
+		                var iClass = ' .alo-item';
 		            }
-		            var classes	= selector + ' '+ iClass;
-		            var padding = options.padding;
+		            var rows 	= ((options || {}).rows === void 0) ? 1 : options.rows;
+		            var classes	= rows ? selector + ' '+ iClass : selector + ' .slick-track > '+ iClass;
+		            var padding = ((options || {}).padding === void 0) ? 0 : options.padding;
 		            var float  	= $('body').hasClass('rtl') ? 'right' : 'left';
-		            var style 	= padding ? classes + '{float: ' + float + '; padding: 0 '+padding+'px; box-sizing: border-box} ' + selector + '{margin: 0 -'+padding+'px}' : '';
+		            var style 	= classes + '{float: ' + float + '; padding: 0 '+padding+'px; box-sizing: border-box;} ' + selector + '{margin: 0 -'+padding+'px;}';
 		            $head.append('<style type="text/css" >'+style+'</style>');
 		            style 		= '';
 		            if(options.slidesToShow){
-						if ("IntersectionObserver" in window) {
+						if ("IntersectionObserver" in window && useIntersectionObserver) {
 							var nthChild = options.slidesToShow + 1;
-							style += selector + ' .item:nth-child(n+ ' + nthChild + ')' + '{display: none;} ' + selector +  ' .item{float:left};';
+							style += selector + ' .item:nth-child(n+ ' + nthChild + ')' + '{display: none;} ' + selector +  ' .item{float:left;}';
 							let gridSliderObserver = new IntersectionObserver(function(entries, observer) {
 								entries.forEach(function(entry) {
 									if (entry.isIntersecting) {
 										let el  = entry.target;
-										$head.find('#' + styleId).remove();
-										self.sliderRender($(el));
-										gridSliderObserver.unobserve(el);
+										var $el = $(el);
+										$el.on('init', function(){
+											$head.find('#' + styleId).remove();
+										});
+										self.sliderRender($el);
+										if(unobserve) gridSliderObserver.unobserve(el);
 									}
 								});
 							});
@@ -96,15 +103,17 @@ define([
 							$.each( responsive[key], function( size, num) { maxWith = size; col = num;});
 							style += ' @media (min-width: '+maxWith+'px)';
 						}
-						style += ' {'+selector + '{margin: 0 -'+padding+'px}'+classes+'{padding: 0 '+padding+'px; box-sizing: border-box; width: '+(Math.floor((10/col) * 100000000000) / 10000000000)+'%} '+classes+':nth-child('+col+'n+1){clear: ' + float + ';}}';
+						let clearRtl = (rows >= 1) ? classes+':nth-child('+col+'n+1){clear: ' + float + ';}' : ' ';  
+						style += ' {'+selector + '{margin: 0 -'+padding+'px;}'+classes+'{padding: 0 '+padding+'px; box-sizing: border-box; width: calc(100% / ' + col + ')} '+clearRtl+'}';
 					});	
 		           	$head.append('<style type="text/css" id="' + styleId + '" >'+style+'</style>');
-
+		           	self.element.addClass('grid-init');
+		           	
                 });
             },
 
             getPesponsive : function (options) {
-            	if(!options.slidesToShow) return options.responsive;
+            	if(!options.slidesToShow || !options.responsive) return options.responsive;
 				var responsive 	= options.responsive;
 				var length = Object.keys(responsive).length;
 				var gridResponsive = [];
@@ -117,6 +126,10 @@ define([
             },
 
             sliderRender: function (el) {
+            	if(el.hasClass('slick-initialized')){
+            		el.slick("refresh");
+            		return;
+            	}
             	var options = el.data();
                 var lazy  = el.find('img.lazyload');
                 if(lazy.length){
@@ -127,15 +140,18 @@ define([
                 el.on('init', function(event, slick){
                 	$('body').trigger('contentUpdated'); // support lazyload
                     var video = $(this).find('.external-video');
-                    video.click(function(event) {
+                    video.on('click', function(event) {
                         var $this = $(this);
+                        if($this.hasClass('embed')) return;
                         var img = $this.find('img');
+                        var caption = $this.find('.magicslider-caption');
+                        caption.remove();
                         event.preventDefault();
                         var url = $(this).data('video');
                         url = url.replace("://vimeo.com/", "://player.vimeo.com/video/");
                         url = url.replace("://www.youtube.com/watch?v=", "://youtube.com/embed/");
                         url = url + '?autoplay=1&badge=0';
-                        var iframe = '<iframe class="iframe-video" src="' + url + '" width="' + img.width() + '" height="' + img.height()  + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'; 
+                        var iframe = '<iframe allow="autoplay" class="iframe-video" src="' + url + '" width="' + img.width() + '" height="' + img.height()  + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'; 
                         $this.append(iframe).addClass('embed');
                         img.hide();
                     });

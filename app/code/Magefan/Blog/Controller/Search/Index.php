@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2015 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -10,7 +10,7 @@ namespace Magefan\Blog\Controller\Search;
 /**
  * Blog search results view
  */
-class Index extends \Magento\Framework\App\Action\Action
+class Index extends \Magefan\Blog\App\Action\Action
 {
     /**
      * View blog search results action
@@ -19,8 +19,12 @@ class Index extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $this->_view->loadLayout();
-        $this->_view->renderLayout();
-    }
+        if (!$this->moduleEnabled()) {
+            return $this->_forwardNoroute();
+        }
 
+        $resultPage = $this->_objectManager->get(\Magefan\Blog\Helper\Page::class)
+            ->prepareResultPage($this, new \Magento\Framework\DataObject());
+        return $resultPage;
+    }
 }

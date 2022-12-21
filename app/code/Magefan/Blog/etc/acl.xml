@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -13,9 +13,23 @@
             <resource id="Magento_Backend::admin">
                 <resource id="Magento_Backend::content">
                     <resource id="Magefan_Blog::elements" title="Blog" sortOrder="10">
-                        <resource id="Magefan_Blog::post" title="Posts" sortOrder="10" />
-                        <resource id="Magefan_Blog::category" title="Categories" sortOrder="20" />
-                        <resource id="Magefan_Blog::import" title="Import" sortOrder="30" />
+                        <resource id="Magefan_Blog::post" title="Posts" sortOrder="10">
+                            <resource id="Magefan_Blog::post_save" title="Save" sortOrder="10" />
+                            <resource id="Magefan_Blog::post_delete" title="Delete" sortOrder="20" />
+                        </resource>
+                        <resource id="Magefan_Blog::category" title="Categories" sortOrder="20">
+                            <resource id="Magefan_Blog::category_save" title="Save" sortOrder="10" />
+                            <resource id="Magefan_Blog::category_delete" title="Delete" sortOrder="20" />
+                        </resource>
+                        <resource id="Magefan_Blog::tag" title="Tags" sortOrder="25">
+                            <resource id="Magefan_Blog::tag_save" title="Save" sortOrder="10" />
+                            <resource id="Magefan_Blog::tag_delete" title="Delete" sortOrder="20" />
+                        </resource>
+                        <resource id="Magefan_Blog::comment" title="Comments" sortOrder="30">
+                            <resource id="Magefan_Blog::comment_save" title="Save" sortOrder="10" />
+                            <resource id="Magefan_Blog::comment_delete" title="Delete" sortOrder="20" />
+                        </resource>
+                        <resource id="Magefan_Blog::import" title="Import" sortOrder="40" />
                     </resource>
                 </resource>
                 <resource id="Magento_Backend::stores">

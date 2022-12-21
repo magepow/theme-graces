@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -9,7 +9,7 @@
 namespace Magefan\Blog\Model\ResourceModel;
 
 /**
- * Blog category resource model
+ * Blog post resource model
  */
 class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
@@ -54,23 +54,39 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
+     * Retrieve date object
+     * @return \Magento\Framework\Stdlib\DateTime
+     */
+    public function getDate()
+    {
+        return $this->_date;
+    }
+
+    /**
      * Process post data before deleting
      *
      * @param \Magento\Framework\Model\AbstractModel $object
      * @return $this
      */
-    protected function _beforeDelete(\Magento\Framework\Model\AbstractModel $object)
-    {
+    protected function _beforeDelete(
+        \Magento\Framework\Model\AbstractModel $object
+    ) {
         $condition = ['post_id = ?' => (int)$object->getId()];
-
-        $this->getConnection()->delete($this->getTable('magefan_blog_post_store'), $condition);
-        $this->getConnection()->delete($this->getTable('magefan_blog_post_category'), $condition);
-        $this->getConnection()->delete($this->getTable('magefan_blog_post_relatedproduct'), $condition);
-
-        $this->getConnection()->delete($this->getTable('magefan_blog_post_relatedpost'), $condition);
-        $this->getConnection()->delete($this->getTable('magefan_blog_post_relatedpost'),
-            ['related_id = ?' => (int)$object->getId()]
-        );
+        $tableSufixs = [
+            'store',
+            'category',
+            'tag',
+            'relatedproduct',
+            'relatedpost',
+        ];
+        foreach ($tableSufixs as $sufix) {
+            $this->getConnection()->delete(
+                $this->getTable('magefan_blog_post_' . $sufix),
+                ($sufix == 'relatedpost')
+                    ? ['related_id = ?' => (int)$object->getId()]
+                    : $condition
+            );
+        }
 
         return parent::_beforeDelete($object);
     }
@@ -84,24 +100,31 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
     {
-        foreach (['publish_time'] as $field) {
-            $value = !$object->getData($field) ? null : $object->getData($field);
+        foreach (['publish_time', 'custom_theme_from', 'custom_theme_to'] as $field) {
+            $value = $object->getData($field) ?: null;
             $object->setData($field, $this->dateTime->formatDate($value));
         }
 
         $identifierGenerator = \Magento\Framework\App\ObjectManager::getInstance()
-                ->create('Magefan\Blog\Model\ResourceModel\PageIdentifierGenerator');
+                ->create(\Magefan\Blog\Model\ResourceModel\PageIdentifierGenerator::class);
         $identifierGenerator->generate($object);
 
         if (!$this->isValidPageIdentifier($object)) {
             throw new \Magento\Framework\Exception\LocalizedException(
-                __('The post URL key contains capital letters or disallowed symbols.')
+                __('The post URL key contains disallowed symbols.')
             );
         }
 
         if ($this->isNumericPageIdentifier($object)) {
             throw new \Magento\Framework\Exception\LocalizedException(
                 __('The post URL key cannot be made of only numbers.')
+            );
+        }
+
+        $id = $this->checkIdentifier($object->getData('identifier'), $object->getData('store_ids'));
+        if ($id && $id !== $object->getId()) {
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('URL key is already in use by another blog item.')
             );
         }
 
@@ -129,40 +152,69 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _afterSave(\Magento\Framework\Model\AbstractModel $object)
     {
         $oldIds = $this->lookupStoreIds($object->getId());
-        $newIds = (array)$object->getStores();
-        if (empty($newIds)) {
-            $newIds = (array)$object->getStoreId();
+        $newIds = (array)$object->getStoreIds();
+        if (!$newIds || in_array(0, $newIds)) {
+            $newIds = [0];
         }
+
         $this->_updateLinks($object, $newIds, $oldIds, 'magefan_blog_post_store', 'store_id');
 
-
-
-        $newIds = (array)$object->getCategories();
-        foreach($newIds as $key => $id) {
-            if (!$id) { // e.g.: zero
-                unset($newIds[$key]);
+        /* Save category & tag links */
+        foreach (['category' => 'categories', 'tag' => 'tags'] as $linkType => $dataKey) {
+            $newIds = (array)$object->getData($dataKey);
+            foreach ($newIds as $key => $id) {
+                if (!$id) { // e.g.: zero
+                    unset($newIds[$key]);
+                }
+            }
+            if (is_array($newIds)) {
+                $lookup = 'lookup' . ucfirst($linkType) . 'Ids';
+                $oldIds = $this->$lookup($object->getId());
+                $this->_updateLinks(
+                    $object,
+                    $newIds,
+                    $oldIds,
+                    'magefan_blog_post_' . $linkType,
+                    $linkType . '_id'
+                );
             }
         }
-        if (is_array($newIds)) {
-            $oldIds = $this->lookupCategoryIds($object->getId());
-            $this->_updateLinks($object, $newIds, $oldIds, 'magefan_blog_post_category', 'category_id');
-        }
 
-
-        $linksData = $object->getData('relatedposts_links');
-        if (is_array($linksData)) {
-            $oldIds = $this->lookupRelatedPostIds($object->getId());
-            $this->_updateLinks($object, array_keys($linksData), $oldIds, 'magefan_blog_post_relatedpost', 'related_id', $linksData);
-        }
-
-
-        $linksData = $object->getData('relatedproducts_links');
-        if (is_array($linksData)) {
-            $oldIds = $this->lookupRelatedProductIds($object->getId());
-            $this->_updateLinks($object, array_keys($linksData), $oldIds, 'magefan_blog_post_relatedproduct', 'related_id', $linksData);
+        /* Save related post & product links */
+        if ($links = $object->getData('links')) {
+            if (is_array($links)) {
+                foreach (['post', 'product'] as $linkType) {
+                    if (isset($links[$linkType]) && is_array($links[$linkType])) {
+                        $linksData = $links[$linkType];
+                        $lookup = 'lookupRelated' . ucfirst($linkType) . 'Ids';
+                        $oldIds = $this->$lookup($object->getId());
+                        $this->_updateLinks(
+                            $object,
+                            array_keys($linksData),
+                            $oldIds,
+                            'magefan_blog_post_related' . $linkType,
+                            'related_id',
+                            $linksData
+                        );
+                    }
+                }
+            }
         }
 
         return parent::_afterSave($object);
+    }
+
+    /**
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @param \Magento\Framework\Model\AbstractModel $object
+     */
+    public function incrementViewsCount(\Magento\Framework\Model\AbstractModel $object)
+    {
+        $this->getConnection()->update(
+            $this->getMainTable(),
+            ['views_count' => $object->getData('views_count') + 1],
+            ['post_id = ?' => $object->getId()]
+        );
     }
 
     /**
@@ -177,13 +229,20 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _updateLinks(
         \Magento\Framework\Model\AbstractModel $object,
-        Array $newRelatedIds,
-        Array $oldRelatedIds,
+        array $newRelatedIds,
+        array $oldRelatedIds,
         $tableName,
         $field,
         $rowData = []
     ) {
         $table = $this->getTable($tableName);
+
+        if ($object->getId() && empty($rowData)) {
+            $currentData = $this->_lookupAll($object->getId(), $tableName, '*');
+            foreach ($currentData as $item) {
+                $rowData[$item[$field]] = $item;
+            }
+        }
 
         $insert = $newRelatedIds;
         $delete = $oldRelatedIds;
@@ -199,10 +258,27 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             foreach ($insert as $id) {
                 $id = (int)$id;
-                $data[] = array_merge(['post_id' => (int)$object->getId(), $field => $id],
+                $data[] = array_merge(
+                    ['post_id' => (int)$object->getId(), $field => $id],
                     (isset($rowData[$id]) && is_array($rowData[$id])) ? $rowData[$id] : []
                 );
             }
+
+            /* Fix if some rows have extra data */
+            $allFields = [];
+            foreach ($data as $i => $row) {
+                foreach ($row as $key => $value) {
+                    $allFields[$key] = $key;
+                }
+            }
+            foreach ($data as $i => $row) {
+                foreach ($allFields as $key) {
+                    if (!array_key_exists($key, $row)) {
+                        $data[$i][$key] = null;
+                    }
+                }
+            }
+            /* End fix */
 
             $this->getConnection()->insertMultiple($table, $data);
         }
@@ -218,7 +294,7 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
     {
-        if (!is_numeric($value) && is_null($field)) {
+        if (!is_numeric($value) && null === $field) {
             $field = 'identifier';
         }
 
@@ -234,11 +310,14 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _afterLoad(\Magento\Framework\Model\AbstractModel $object)
     {
         if ($object->getId()) {
-            $stores = $this->lookupStoreIds($object->getId());
-            $object->setData('store_id', $stores);
+            $storeIds = $this->lookupStoreIds($object->getId());
+            $object->setData('store_ids', $storeIds);
 
             $categories = $this->lookupCategoryIds($object->getId());
             $object->setCategories($categories);
+
+            $tags = $this->lookupTagIds($object->getId());
+            $object->setTags($tags);
         }
 
         return parent::_afterLoad($object);
@@ -252,7 +331,7 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param int $storeId
      * @return int
      */
-    protected function _getLoadByIdentifierSelect($identifier, $store, $isActive = null)
+    protected function _getLoadByIdentifierSelect($identifier, $storeIds)
     {
         $select = $this->getConnection()->select()->from(
             ['cp' => $this->getMainTable()]
@@ -265,13 +344,9 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $identifier
         )->where(
             'cps.store_id IN (?)',
-            $store
+            $storeIds
         );
 
-        if (!is_null($isActive)) {
-            $select->where('cp.is_active = ?', $isActive)
-                ->where('cp.publish_time <= ?', $this->_date->gmtDate());
-        }
         return $select;
     }
 
@@ -294,7 +369,7 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function isValidPageIdentifier(\Magento\Framework\Model\AbstractModel $object)
     {
-        return preg_match('/^[a-z0-9][a-z0-9_\/-]+(\.[a-z0-9_-]+)?$/', $object->getData('identifier'));
+        return preg_match('/^([^?#<>@!&*()$%^\\+=,{}"\']+)?$/', $object->getData('identifier'));
     }
 
     /**
@@ -305,13 +380,13 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param int|array $storeId
      * @return int
      */
-    public function checkIdentifier($identifier, $stores)
+    public function checkIdentifier($identifier, $storeIds)
     {
-        if (!is_array($stores)) {
-            $stores = [$stores];
+        if (!is_array($storeIds)) {
+            $storeIds = [$storeIds];
         }
-        $stores[] = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
-        $select = $this->_getLoadByIdentifierSelect($identifier, $stores, 1);
+        $storeIds[] = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+        $select = $this->_getLoadByIdentifierSelect($identifier, $storeIds);
         $select->reset(\Zend_Db_Select::COLUMNS)->columns('cp.post_id')->order('cps.store_id DESC')->limit(1);
 
         return $this->getConnection()->fetchOne($select);
@@ -320,7 +395,7 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Get store ids to which specified item is assigned
      *
-     * @param int $pageId
+     * @param int $postId
      * @return array
      */
     public function lookupStoreIds($postId)
@@ -331,7 +406,7 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Get category ids to which specified item is assigned
      *
-     * @param int $pageId
+     * @param int $postId
      * @return array
      */
     public function lookupCategoryIds($postId)
@@ -340,9 +415,20 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
+     * Get tag ids to which specified item is assigned
+     *
+     * @param int $postId
+     * @return array
+     */
+    public function lookupTagIds($postId)
+    {
+        return $this->_lookupIds($postId, 'magefan_blog_post_tag', 'tag_id');
+    }
+
+    /**
      * Get related post ids to which specified item is assigned
      *
-     * @param int $pageId
+     * @param int $postId
      * @return array
      */
     public function lookupRelatedPostIds($postId)
@@ -353,7 +439,7 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Get related product ids to which specified item is assigned
      *
-     * @param int $pageId
+     * @param int $postId
      * @return array
      */
     public function lookupRelatedProductIds($postId)
@@ -371,7 +457,6 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _lookupIds($postId, $tableName, $field)
     {
         $adapter = $this->getConnection();
-
         $select = $adapter->select()->from(
             $this->getTable($tableName),
             $field
@@ -383,4 +468,25 @@ class Post extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         return $adapter->fetchCol($select);
     }
 
+    /**
+     * Get rows to which specified item is assigned
+     * @param  int $postId
+     * @param  string $tableName
+     * @param  string $field
+     * @return array
+     */
+    protected function _lookupAll($postId, $tableName, $field)
+    {
+        $adapter = $this->getConnection();
+
+        $select = $adapter->select()->from(
+            $this->getTable($tableName),
+            $field
+        )->where(
+            'post_id = ?',
+            (int)$postId
+        );
+
+        return $adapter->fetchAll($select);
+    }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -9,7 +9,6 @@
 namespace Magefan\Blog\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Data\Tree\Node;
 
 /**
  * Blog observer
@@ -17,17 +16,17 @@ use Magento\Framework\Data\Tree\Node;
 class PageBlockHtmlTopmenuBethtmlBeforeObserver implements ObserverInterface
 {
     /**
-     * @var \Magefan\Blog\Model\Url
+     * @var \Magefan\Blog\Helper\Menu
      */
-    protected $_url;
+    protected $menuHelper;
 
     /**
-     * @param \Magefan\Blog\Model\Url $url
+     * @param \Magefan\Blog\Helper\Menu $menuHelper
      */
     public function __construct(
-        \Magefan\Blog\Model\Url $url
+        \Magefan\Blog\Helper\Menu $menuHelper
     ) {
-        $this->_url = $url;
+        $this->menuHelper = $menuHelper;
     }
 
     /**
@@ -41,17 +40,11 @@ class PageBlockHtmlTopmenuBethtmlBeforeObserver implements ObserverInterface
     {
         /** @var \Magento\Framework\Data\Tree\Node $menu */
         $menu = $observer->getMenu();
-        $block = $observer->getBlock();
-
         $tree = $menu->getTree();
-        $data = [
-            'name'      => __('Blog'),
-            'id'        => 'magefan-blog',
-            'url'       => $this->_url->getBaseUrl(),
-            'is_active' => ($block->getRequest()->getModuleName() == 'blog'),
-        ];
-        $node = new Node($data, 'id', $tree, $menu);
-        $menu->addChild($node);
-        return $this;
+
+        $blogNode = $this->menuHelper->getBlogNode($menu, $menu->getTree());
+        if ($blogNode) {
+            $menu->addChild($blogNode);
+        }
     }
 }

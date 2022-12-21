@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © 2016 Ihor Vansach (ihor@magefan.com). All rights reserved.
- * See LICENSE.txt for license details (http://opensource.org/licenses/osl-3.0.php).
+ * Copyright © Magefan (support@magefan.com). All rights reserved.
+ * Please visit Magefan.com for license details (https://magefan.com/end-user-license-agreement).
  *
  * Glory to Ukraine! Glory to the heroes!
  */
@@ -35,7 +35,7 @@ class Archive extends \Magefan\Blog\Block\Post\PostList\AbstractList
     {
         parent::_preparePostCollection();
         $this->_postCollection->getSelect()->group(
-            'MONTH(main_table.publish_time)',
+            'CONCAT(YEAR(main_table.publish_time),"-",MONTH(main_table.publish_time))',
             'DESC'
         );
     }
@@ -46,15 +46,14 @@ class Archive extends \Magefan\Blog\Block\Post\PostList\AbstractList
      */
     public function getMonths()
     {
-        if (is_null($this->_months)) {
-            $this->_months = array();
+        if (null === $this->_months) {
+            $this->_months = [];
             $this->_preparePostCollection();
-            foreach($this->_postCollection as $post) {
+            foreach ($this->_postCollection as $post) {
                 $time = strtotime($post->getData('publish_time'));
                 $this->_months[date('Y-m', $time)] = $time;
             }
         }
-
 
         return $this->_months;
     }
@@ -93,12 +92,27 @@ class Archive extends \Magefan\Blog\Block\Post\PostList\AbstractList
     }
 
     /**
-     * Retrieve blog identities
+     * Retrieve empty identities
+     * Fix for varnish error Error 503 Service Unavailable, when have many blog posts
+     *
      * @return array
      */
     public function getIdentities()
     {
-        return [\Magento\Cms\Model\Block::CACHE_TAG . '_blog_archive_widget'];
+        return [];
     }
 
+    /**
+     * @param $time
+     * @return string
+     */
+    public function getTranslatedDate($time)
+    {
+        $format = $this->_scopeConfig->getValue(
+            'mfblog/sidebar/archive/format_date',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+
+        return \Magefan\Blog\Helper\Data::getTranslatedDate($format, $time);
+    }
 }
